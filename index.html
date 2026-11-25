@@ -73,7 +73,7 @@ p{line-height:1.5}
 .card-img:active{transform:scale(.97)}
 .card-img.sel{border-color:var(--pink)}
 .card-img .art{background:linear-gradient(180deg,#FFE9F0,#FFF7FA);height:150px;display:flex;align-items:flex-end;justify-content:center}
-.card-img .art svg{height:140px}
+.card-img .art svg{height:148px}
 .card-img .lbl{padding:11px 10px;font-weight:900;font-size:15px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(90deg,var(--pink),var(--pink-d));color:#fff}
 .card-img.light .lbl{background:#fff;color:var(--ink)}
 .card-img.light.sel .lbl{background:var(--pink);color:#fff}
@@ -314,75 +314,124 @@ const UTM = Object.fromEntries(new URLSearchParams(location.search));
 
 /* ================= ILLUSTRATIONS (SVG) ================= */
 const SKIN = ['#F3C9AE','#E8B08C','#C68863','#8D5B3F'];
-function limb(x1,y1,x2,y2,c,w){return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`}
-function poly(pts,c,w){return `<polyline points="${pts}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`}
-/* one frame of a woman. pose: stand | down | overhead | squat | lunge | twistL | twistR | slump */
+const f1 = n => (+n).toFixed(1);
+function shade(hex,amt){ let c=hex.replace('#',''); const n=parseInt(c,16); const ch=[(n>>16)&255,(n>>8)&255,n&255].map(v=>Math.max(0,Math.min(255,Math.round(v*(1+amt))))); return '#'+ch.map(v=>v.toString(16).padStart(2,'0')).join(''); }
+function seg(a,b,r1,r2,c){ const [x1,y1]=a,[x2,y2]=b,dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy)||1,nx=-dy/L,ny=dx/L;
+  return `<g fill="${c}"><path d="M${f1(x1+nx*r1)} ${f1(y1+ny*r1)}L${f1(x2+nx*r2)} ${f1(y2+ny*r2)}L${f1(x2-nx*r2)} ${f1(y2-ny*r2)}L${f1(x1-nx*r1)} ${f1(y1-ny*r1)}Z"/><circle cx="${f1(x1)}" cy="${f1(y1)}" r="${f1(r1)}"/><circle cx="${f1(x2)}" cy="${f1(y2)}" r="${f1(r2)}"/></g>`; }
+function heart(x,y,sz,c){ return `<path d="M${x} ${y+sz*.9}C${x-sz*1.6} ${y-sz*.2} ${x-sz*.6} ${y-sz*1.3} ${x} ${y-sz*.35}C${x+sz*.6} ${y-sz*1.3} ${x+sz*1.6} ${y-sz*.2} ${x} ${y+sz*.9}Z" fill="${c}"/>`; }
+function star(x,y,r,c){ return `<path d="M${x} ${y-r}L${x+r*.28} ${y-r*.28}L${x+r} ${y}L${x+r*.28} ${y+r*.28}L${x} ${y+r}L${x-r*.28} ${y+r*.28}L${x-r} ${y}L${x-r*.28} ${y-r*.28}Z" fill="${c}"/>`; }
+
+/* woman, front view. o: pose, skin, hair, top, bottom, stick, belly, short, bun, mood, shape{s,b,wa,h,l}, prop, def */
 function frame(o){
-  const w=o.w||1, sk=o.skin||SKIN[0], hr=o.hair||'#5B3A2C', top=o.top||'#F27BA4', bot=o.bottom||'#7D5C79', st='#C08A5B';
-  const pose=o.pose||'stand';
-  let dy = pose==='squat'?24:(pose==='lunge'?14:0);
-  const cx=60+(pose==='twistL'?-3:pose==='twistR'?3:0);
-  const sh=15*w, hip=9*w, lw=11*w, aw=7*w;
-  const hy=30+dy, ny=44+dy, ty=48+dy, by=104+dy;
-  let s='';
-  // legs
-  if(pose==='squat'){
-    s+=poly(`${60-hip},${by} ${60-hip-20},${by+22} ${60-hip-14},${190}`,bot,lw);
-    s+=poly(`${60+hip},${by} ${60+hip+20},${by+22} ${60+hip+14},${190}`,bot,lw);
-  } else if(pose==='lunge'){
-    s+=poly(`${60-hip},${by} ${30},${by+30} ${30},${190}`,bot,lw);
-    s+=poly(`${60+hip},${by} ${84},${by+40} ${104},${186}`,bot,lw);
-  } else {
-    s+=limb(60-hip,by,60-hip-2,188,bot,lw); s+=limb(60+hip,by,60+hip+2,188,bot,lw);
+  const sk=o.skin||SKIN[0], skD=shade(sk,-.12), hr=o.hair||'#5B3A2C', top=o.top||'#F27BA4', bot=o.bottom||'#7D5C79';
+  const sh=Object.assign({s:1,b:1,wa:1,h:1,l:1},o.shape||{}), w=o.w||1, pose=o.pose||'stand';
+  const S=13*w*sh.s, B=11.8*w*sh.b, Wa=8.8*w*sh.wa+(o.belly?2.8:0), H=13.4*w*sh.h, LH=6.8*w*sh.h;
+  const tr=[8*w*sh.l,5*w*sh.l,3], ar=[3.5*w*sh.s,2.8*w*sh.s,2.1];
+  const sit = pose==='sit';
+  const oy = pose==='squat'?20 : pose==='lunge'?9 : pose==='tired'?6 : sit?38 : 0;
+  const cx = 60;
+  let s='', back='', fore='';
+  // ground shadow
+  s+=`<ellipse cx="60" cy="192" rx="${sit?34:24}" ry="3.4" fill="rgba(224,85,138,.13)"/>`;
+  // sofa behind sitter
+  if(sit){ s+=`<rect x="10" y="98" width="100" height="58" rx="12" fill="#E8C7D3"/><rect x="4" y="122" width="112" height="40" rx="12" fill="#F1D6E0"/><rect x="14" y="160" width="6" height="22" rx="2" fill="#C9A3B3"/><rect x="100" y="160" width="6" height="22" rx="2" fill="#C9A3B3"/>`; }
+  // scene props behind
+  if(o.prop==='stairs'){ s+=`<path d="M4 192V172H26V152H48V132H70V112H92V92H118V192Z" fill="#F3D9E2"/><path d="M4 172H26V152H48V132H70V112H92V92H118" fill="none" stroke="#E4BFCD" stroke-width="2"/>`; }
+  // ---- legs ----
+  const hipY=98+oy;
+  let L, R;
+  if(sit){ L=[[cx-LH,hipY],[cx-LH-4,hipY+2],[cx-LH-6,184]]; R=[[cx+LH,hipY],[cx+LH+4,hipY+2],[cx+LH+6,184]];
+           L[1]=[cx-LH-2,148]; R[1]=[cx+LH+2,148]; L[2]=[cx-LH-4,184]; R[2]=[cx+LH+4,184]; }
+  else if(pose==='squat'){ L=[[cx-LH,hipY],[cx-LH-15,140],[cx-LH-9,183]]; R=[[cx+LH,hipY],[cx+LH+15,140],[cx+LH+9,183]]; }
+  else if(pose==='lunge'){ L=[[cx-LH,hipY],[cx-24,136],[cx-26,183]]; R=[[cx+LH,hipY],[cx+20,158],[cx+38,178]]; }
+  else if(pose==='tired'){ L=[[cx-LH,hipY],[cx-LH-6,140],[cx-LH-4,183]]; R=[[cx+LH,hipY],[cx+LH+3,142],[cx+LH+2,183]]; }
+  else if(pose==='hip'){ L=[[cx-LH,hipY],[cx-LH-1,141],[cx-LH-3,183]]; R=[[cx+LH,hipY],[cx+LH-3,141],[cx+LH-6,183]]; }
+  else { L=[[cx-LH,hipY],[cx-LH+0.5,141],[cx-LH+1.5,183]]; R=[[cx+LH,hipY],[cx+LH-0.5,141],[cx+LH-1.5,183]]; }
+  const leg=(P,c)=>seg(P[0],P[1],tr[0],tr[1],c)+seg(P[1],P[2],tr[1],tr[2],c);
+  s+=leg(R,shade(bot,-.08))+leg(L,bot);
+  const shoe=(P,dir)=>`<path d="M${f1(P[2][0]-6*dir*-1)} ${f1(P[2][1]+5)}Q${f1(P[2][0])} ${f1(P[2][1]-1)} ${f1(P[2][0]+7*dir)} ${f1(P[2][1]+4)}Q${f1(P[2][0]+8*dir)} ${f1(P[2][1]+7)} ${f1(P[2][0])} ${f1(P[2][1]+7)}Z" fill="#fff" stroke="#E4BFCD" stroke-width="1.2"/>`;
+  s+= pose==='lunge' ? `<ellipse cx="${f1(R[2][0]+2)}" cy="${f1(R[2][1]+5)}" rx="5" ry="3" fill="#fff" stroke="#E4BFCD" stroke-width="1.2"/>`+shoe(L,-1) : shoe(L,-1)+shoe(R,1);
+  // ---- torso ----
+  const ty=oy, slump = pose==='slump'||pose==='tired';
+  const sx = slump?1.5:0;
+  const torso = `M${f1(cx-S+sx)} ${47+ty}Q${f1(cx-S-1)} ${55+ty} ${f1(cx-B)} ${63+ty}Q${f1(cx-Wa-1.5)} ${71+ty} ${f1(cx-Wa)} ${79+ty}Q${f1(cx-H-1)} ${88+ty} ${f1(cx-H)} ${99+ty}L${f1(cx+H)} ${99+ty}Q${f1(cx+H+1)} ${88+ty} ${f1(cx+Wa)} ${79+ty}Q${f1(cx+Wa+1.5)} ${71+ty} ${f1(cx+B)} ${63+ty}Q${f1(cx+S+1)} ${55+ty} ${f1(cx+S+sx)} ${47+ty}Q${cx} ${42+ty} ${f1(cx-S+sx)} ${47+ty}Z`;
+  s+=`<path d="${torso}" fill="${sk}"/>`;
+  // tank top
+  s+=`<path d="M${f1(cx-S+4)} ${47+ty}Q${f1(cx-S)} ${55+ty} ${f1(cx-B)} ${63+ty}Q${f1(cx-Wa-1.5)} ${71+ty} ${f1(cx-Wa)} ${79+ty}L${f1(cx-Wa-.6)} ${86+ty}Q${cx} ${88.5+ty} ${f1(cx+Wa+.6)} ${86+ty}L${f1(cx+Wa)} ${79+ty}Q${f1(cx+Wa+1.5)} ${71+ty} ${f1(cx+B)} ${63+ty}Q${f1(cx+S)} ${55+ty} ${f1(cx+S-4)} ${47+ty}L${f1(cx+S-8)} ${46+ty}Q${cx} ${59+ty} ${f1(cx-S+8)} ${46+ty}Z" fill="${top}"/>`;
+  s+=`<path d="M${f1(cx-B+3)} ${65+ty}Q${f1(cx-B/2)} ${69+ty} ${cx} ${65.5+ty}Q${f1(cx+B/2)} ${69+ty} ${f1(cx+B-3)} ${65+ty}" fill="none" stroke="${shade(top,-.15)}" stroke-width="1"/>`;
+  if(o.belly) s+=`<ellipse cx="${cx}" cy="${83+ty}" rx="${f1(Wa+.8)}" ry="5" fill="${top}"/>`;
+  // leggings top
+  s+=`<path d="M${f1(cx-Wa-.8)} ${85+ty}Q${cx} ${87.5+ty} ${f1(cx+Wa+.8)} ${85+ty}Q${f1(cx+H)} ${92+ty} ${f1(cx+H)} ${99+ty}L${f1(cx+LH+tr[0])} ${104+ty}L${f1(cx-LH-tr[0])} ${104+ty}L${f1(cx-H)} ${99+ty}Q${f1(cx-H)} ${92+ty} ${f1(cx-Wa-.8)} ${85+ty}Z" fill="${bot}"/>`;
+  s+=`<path d="M${f1(cx-Wa-.6)} ${86.2+ty}Q${cx} ${88.8+ty} ${f1(cx+Wa+.6)} ${86.2+ty}" fill="none" stroke="${shade(bot,.25)}" stroke-width="1.4"/>`;
+  if(o.def){ s+=`<path d="M${cx} ${70+ty}V${82+ty}M${cx-4} ${74+ty}Q${cx-2} ${75+ty} ${cx-1} ${74+ty}M${cx+1} ${74+ty}Q${cx+2} ${75+ty} ${cx+4} ${74+ty}" stroke="${shade(top,-.2)}" stroke-width=".9" fill="none"/>`; }
+  // ---- arms ----
+  const shY=50+ty, sl=[cx-S+2+sx,shY], sr=[cx+S-2+sx,shY];
+  let A1,A2, stick=null; // A = [shoulder, elbow, hand]
+  const up = (dx1,y1,dx2,y2)=>[[sl,[cx-S-dx1,y1],[cx-dx2,y2]],[sr,[cx+S+dx1,y1],[cx+dx2,y2]]];
+  switch(pose){
+    case 'overhead': case 'squat': case 'lunge': [A1,A2]=up(7,30+oy*.55,17,9+oy*.5); stick=[[cx-46,9+oy*.5],[cx+46,9+oy*.5]]; break;
+    case 'stand': [A1,A2]=[[sl,[cx-S-2,74],[cx-15,98]],[sr,[cx+S+2,74],[cx+15,98]]]; stick=[[cx-46,98],[cx+46,98]]; break;
+    case 'twistL': case 'twistR': { const k=pose==='twistL'?-1:1; A1=[sl,[cx-S-1,66],[cx+k*9-10,70-k*3]]; A2=[sr,[cx+S+1,66],[cx+k*9+10,70+k*3]]; stick=[[cx+k*9-40,70-k*12],[cx+k*9+40,70+k*12]]; break; }
+    case 'flex': [A1,A2]=[[sl,[cx-S-13,49],[cx-S-9,30]],[sr,[cx+S+13,49],[cx+S+9,30]]]; break;
+    case 'hip': [A1,A2]=[[sl,[cx-S-11,69],[cx-Wa-3,83]],[sr,[cx+S+11,69],[cx+Wa+3,83]]]; break;
+    case 'tape': [A1,A2]=[[sl,[cx-S-6,72],[cx-Wa-10,82]],[sr,[cx+S+6,72],[cx+Wa+10,82]]]; break;
+    case 'joy': [A1,A2]=[[sl,[cx-S-11,33],[cx-S-22,16]],[sr,[cx+S+11,33],[cx+S+22,16]]]; break;
+    case 'belly': [A1,A2]=[[sl,[cx-S-5,71],[cx-4,82+ty]],[sr,[cx+S+5,71],[cx+5,84+ty]]]; break;
+    case 'chin': [A1,A2]=[[sl,[cx-S-2,76],[cx-S-3,99]],[sr,[cx+S+4,74],[cx+7,40]]]; break;
+    case 'tired': [A1,A2]=[[sl,[cx-S-4,80],[cx-LH-6,112]],[sr,[cx+S+3,80],[cx+LH+4,114]]]; break;
+    case 'sit': [A1,A2]=[[sl,[cx-S-3,74+ty],[cx-12,96+ty]],[sr,[cx+S+3,74+ty],[cx+12,96+ty]]]; break;
+    default: [A1,A2]=[[sl,[cx-S-3,73+ty],[cx-S-3.5,97+ty]],[sr,[cx+S+3,73+ty],[cx+S+3.5,97+ty]]];
   }
-  // shoes
-  const fx = pose==='squat'?[60-hip-14,60+hip+14]:pose==='lunge'?[30,104]:[60-hip-2,60+hip+2];
-  s+=`<ellipse cx="${fx[0]-3}" cy="192" rx="9" ry="4.5" fill="#fff" stroke="#EBCFDA" stroke-width="1.5"/><ellipse cx="${fx[1]+3}" cy="192" rx="9" ry="4.5" fill="#fff" stroke="#EBCFDA" stroke-width="1.5"/>`;
-  // torso
-  const tw=30*w + (o.belly?6:0);
-  const slump = pose==='slump';
-  s+=`<rect x="${cx-tw/2}" y="${ty}" width="${tw}" height="${60}" rx="${12*w}" fill="${top}" ${slump?`transform="rotate(6 ${cx} ${ty+60})"`:''}/>`;
-  s+=`<rect x="${60-tw/2-1}" y="${by-8}" width="${tw+2}" height="16" rx="7" fill="${bot}"/>`;
-  // arms + stick
-  const sy=ty+6, lx=cx-sh, rx=cx+sh;
-  if(pose==='overhead'||pose==='squat'){
-    s+=poly(`${lx},${sy} ${lx-12},${sy-22} ${cx-26},${8+dy*0.3}`,sk,aw);
-    s+=poly(`${rx},${sy} ${rx+12},${sy-22} ${cx+26},${8+dy*0.3}`,sk,aw);
-    if(o.stick!==false) s+=limb(cx-48,8+dy*0.3,cx+48,8+dy*0.3,st,4.5);
-  } else if(pose==='lunge'){
-    s+=poly(`${lx},${sy} ${lx-14},${sy-20} ${cx-24},${12+dy*0.3}`,sk,aw);
-    s+=poly(`${rx},${sy} ${rx+14},${sy-20} ${cx+24},${12+dy*0.3}`,sk,aw);
-    if(o.stick!==false) s+=limb(cx-46,12+dy*0.3,cx+46,12+dy*0.3,st,4.5);
-  } else if(pose==='twistL'||pose==='twistR'){
-    const k = pose==='twistL'?-1:1;
-    s+=limb(lx,sy,cx-20+k*10,sy+14,sk,aw); s+=limb(rx,sy,cx+20+k*10,sy+14,sk,aw);
-    if(o.stick!==false) s+=limb(cx-44+k*16,sy+14-k*10,cx+44+k*16,sy+14+k*10,st,4.5);
-  } else if(pose==='down'||pose==='slump'){
-    s+=limb(lx,sy,lx-4,sy+50,sk,aw); s+=limb(rx,sy,rx+4,sy+50,sk,aw);
-    if(o.stick) s+=limb(rx+4,sy+50-60,rx+6,sy+50+40,st,4.5);
-  } else { // stand holding stick at hips
-    s+=poly(`${lx},${sy} ${lx-6},${sy+30} ${cx-20},${sy+52}`,sk,aw);
-    s+=poly(`${rx},${sy} ${rx+6},${sy+30} ${cx+20},${sy+52}`,sk,aw);
-    if(o.stick!==false) s+=limb(cx-46,sy+52,cx+46,sy+52,st,4.5);
-  }
-  // neck + head
-  const hx = cx + (slump?4:0), hyy = hy + (slump?5:0);
-  s+=`<rect x="${hx-4}" y="${hyy+8}" width="8" height="10" rx="3" fill="${sk}"/>`;
-  s+=`<ellipse cx="${hx}" cy="${hyy-2}" rx="${o.short?15:17}" ry="${o.short?15:18}" fill="${hr}"/>`;
-  if(!o.short) s+=`<path d="M${hx-15} ${hyy} Q${hx-19} ${hyy+22} ${hx-10} ${hyy+26} L${hx+10} ${hyy+26} Q${hx+19} ${hyy+22} ${hx+15} ${hyy} Z" fill="${hr}"/>`;
-  if(o.bun) s+=`<circle cx="${hx}" cy="${hyy-19}" r="7" fill="${hr}"/>`;
-  s+=`<circle cx="${hx}" cy="${hyy+2}" r="12.5" fill="${sk}"/>`;
-  s+=`<path d="M${hx-13} ${hyy-2} Q${hx-6} ${hyy-14} ${hx+13} ${hyy-4} Q${hx+8} ${hyy-16} ${hx-2} ${hyy-15} Q${hx-12} ${hyy-13} ${hx-13} ${hyy-2}Z" fill="${hr}"/>`;
+  const arm=(P,c)=>seg(P[0],P[1],ar[0],ar[1],c)+seg(P[1],P[2],ar[1],ar[2],c)+`<circle cx="${f1(P[2][0])}" cy="${f1(P[2][1])}" r="${f1(ar[2]+1)}" fill="${c}"/>`;
+  const armsOver = ['overhead','squat','lunge','flex','joy','chin','twistL','twistR','belly','hip','tape','stand','sit','tired'].includes(pose);
+  if(stick && o.stick!==false){ const [a,b]=stick; fore+=`<line x1="${f1(a[0])}" y1="${f1(a[1])}" x2="${f1(b[0])}" y2="${f1(b[1])}" stroke="#A8724A" stroke-width="4.2" stroke-linecap="round"/><line x1="${f1(a[0]+1)}" y1="${f1(a[1]-1)}" x2="${f1(b[0]-1)}" y2="${f1(b[1]-1)}" stroke="#D4A47A" stroke-width="1.1" stroke-linecap="round"/>`; }
+  const arms = arm(A1,sk)+arm(A2,sk);
+  if(o.def && pose==='flex'){ fore+=`<path d="M${f1(cx-S-12)} ${f1(46)}q-3 -4 0 -8M${f1(cx+S+12)} ${f1(46)}q3 -4 0 -8" stroke="${skD}" stroke-width="1" fill="none"/>`; }
+  if(o.prop==='tape'){ fore+=`<rect x="${f1(cx-Wa-10)}" y="${80.2+ty}" width="${f1(2*Wa+20)}" height="3.6" rx="1" fill="#F6C945"/>`+Array.from({length:9},(_,i)=>`<line x1="${f1(cx-Wa-8+i*(2*Wa+16)/8)}" y1="${80.2+ty}" x2="${f1(cx-Wa-8+i*(2*Wa+16)/8)}" y2="${82+ty}" stroke="#B38A1C" stroke-width=".6"/>`).join(''); }
+  // ---- head ----
+  const hx = cx + (slump?2.5:0) + (pose==='chin'?1:0), hy = 25 + oy + (slump?4:0);
+  // back hair
+  if(o.short){ back+=`<path d="M${hx-12.5} ${hy+2}Q${hx-14} ${hy-14} ${hx} ${hy-14.5}Q${hx+14} ${hy-14} ${hx+12.5} ${hy+2}Q${hx+12} ${hy+10} ${hx+8} ${hy+11}L${hx-8} ${hy+11}Q${hx-12} ${hy+10} ${hx-12.5} ${hy+2}Z" fill="${hr}"/>`; }
+  else { back+=`<path d="M${hx-12.5} ${hy}Q${hx-14} ${hy-15} ${hx} ${hy-15}Q${hx+14} ${hy-15} ${hx+12.5} ${hy}Q${hx+15} ${hy+16} ${hx+12} ${hy+24}Q${hx} ${hy+28} ${hx-12} ${hy+24}Q${hx-15} ${hy+16} ${hx-12.5} ${hy}Z" fill="${hr}"/>`; }
+  if(o.bun) back+=`<circle cx="${hx+1}" cy="${hy-15}" r="6.5" fill="${hr}"/>`;
+  s+=back;
+  // neck
+  s+=seg([hx,hy+8],[cx+sx*.5,46+ty],3.4,3.6,skD);
+  // arms drawn after torso
+  s+=arms+fore;
   // face
-  const mood = o.mood||'smile';
-  s+=`<circle cx="${hx-4.5}" cy="${hyy+2}" r="1.4" fill="#3B2531"/><circle cx="${hx+4.5}" cy="${hyy+2}" r="1.4" fill="#3B2531"/>`;
-  s+= mood==='smile' ? `<path d="M${hx-4} ${hyy+7} Q${hx} ${hyy+10.5} ${hx+4} ${hyy+7}" stroke="#B5546F" stroke-width="1.6" fill="none" stroke-linecap="round"/>`
-     : mood==='flat' ? `<line x1="${hx-3.5}" y1="${hyy+8}" x2="${hx+3.5}" y2="${hyy+8}" stroke="#B5546F" stroke-width="1.6" stroke-linecap="round"/>`
-     : `<circle cx="${hx}" cy="${hyy+8}" r="2.2" fill="#B5546F"/>`;
-  s+=`<circle cx="${hx-8}" cy="${hyy+6}" r="2.4" fill="#F59BB8" opacity=".55"/><circle cx="${hx+8}" cy="${hyy+6}" r="2.4" fill="#F59BB8" opacity=".55"/>`;
+  s+=`<ellipse cx="${hx-10}" cy="${hy+1.5}" rx="1.8" ry="2.6" fill="${skD}"/><ellipse cx="${hx+10}" cy="${hy+1.5}" rx="1.8" ry="2.6" fill="${skD}"/>`;
+  s+=`<ellipse cx="${hx}" cy="${hy}" rx="10" ry="12" fill="${sk}"/>`;
+  // fringe
+  if(o.short) s+=`<path d="M${hx-11} ${hy}Q${hx-11} ${hy-12.5} ${hx} ${hy-13}Q${hx+11} ${hy-12.5} ${hx+11} ${hy+1}Q${hx+7} ${hy-8} ${hx-1} ${hy-8.5}Q${hx-8} ${hy-7} ${hx-11} ${hy}Z" fill="${hr}"/>`;
+  else s+=`<path d="M${hx-10.8} ${hy+3}Q${hx-11.5} ${hy-12.5} ${hx+1} ${hy-12.8}Q${hx+11.5} ${hy-12} ${hx+10.8} ${hy+3}Q${hx+9} ${hy-6} ${hx+2} ${hy-8.2}Q${hx-6} ${hy-6.5} ${hx-10.8} ${hy+3}Z" fill="${hr}"/>`;
+  // brows, eyes, nose, mouth
+  const mood=o.mood||'smile', br=shade(hr,-.25);
+  const browY = mood==='o'||mood==='worried' ? hy-3.6 : hy-3;
+  s+=`<path d="M${hx-6.4} ${browY+ (mood==='worried'?1:0)}Q${hx-4.3} ${browY-1.3} ${hx-2.2} ${browY}M${hx+2.2} ${browY}Q${hx+4.3} ${browY-1.3} ${hx+6.4} ${browY+(mood==='worried'?1:0)}" stroke="${br}" stroke-width="1.1" fill="none" stroke-linecap="round"/>`;
+  if(mood==='big'){ s+=`<path d="M${hx-5.6} ${hy+1}Q${hx-4.2} ${hy-.6} ${hx-2.8} ${hy+1}M${hx+2.8} ${hy+1}Q${hx+4.2} ${hy-.6} ${hx+5.6} ${hy+1}" stroke="#2B1A22" stroke-width="1.2" fill="none" stroke-linecap="round"/>`; }
+  else { s+=`<ellipse cx="${hx-4.2}" cy="${hy+.6}" rx="1.25" ry="1.6" fill="#2B1A22"/><ellipse cx="${hx+4.2}" cy="${hy+.6}" rx="1.25" ry="1.6" fill="#2B1A22"/><circle cx="${hx-3.8}" cy="${hy}" r=".45" fill="#fff"/><circle cx="${hx+4.6}" cy="${hy}" r=".45" fill="#fff"/>`; }
+  s+=`<path d="M${hx-.2} ${hy+2.4}Q${hx+1.3} ${hy+4.6} ${hx-.6} ${hy+5}" stroke="${shade(sk,-.28)}" stroke-width=".9" fill="none" stroke-linecap="round"/>`;
+  if(mood==='big') s+=`<path d="M${hx-3.8} ${hy+6.8}Q${hx} ${hy+11.2} ${hx+3.8} ${hy+6.8}Z" fill="#B84A63"/><path d="M${hx-3.2} ${hy+7.1}Q${hx} ${hy+8.2} ${hx+3.2} ${hy+7.1}L${hx+2.8} ${hy+7.9}Q${hx} ${hy+8.8} ${hx-2.8} ${hy+7.9}Z" fill="#fff"/>`;
+  else if(mood==='flat') s+=`<path d="M${hx-3} ${hy+8}Q${hx} ${hy+7.4} ${hx+3} ${hy+8}" stroke="#B84A63" stroke-width="1.4" fill="none" stroke-linecap="round"/>`;
+  else if(mood==='o'||mood==='worried') s+=`<ellipse cx="${hx}" cy="${hy+8}" rx="1.7" ry="2" fill="#B84A63"/>`;
+  else s+=`<path d="M${hx-3.4} ${hy+7}Q${hx} ${hy+10} ${hx+3.4} ${hy+7}Q${hx} ${hy+8.4} ${hx-3.4} ${hy+7}Z" fill="#C9566F"/>`;
+  s+=`<ellipse cx="${hx-6.6}" cy="${hy+4.6}" rx="2.4" ry="1.5" fill="#F28FB0" opacity=".38"/><ellipse cx="${hx+6.6}" cy="${hy+4.6}" rx="2.4" ry="1.5" fill="#F28FB0" opacity=".38"/>`;
+  // hand on chin drawn over face
+  if(pose==='chin') s+=`<circle cx="${cx+7}" cy="40" r="3" fill="${sk}"/>`;
+  // props over everything
+  if(o.prop==='hearts') s+=heart(18,30,4,'#F27BA4')+heart(102,24,5,'#E0558A')+heart(96,52,3,'#F7A8C4')+heart(26,56,3,'#F7A8C4');
+  if(o.prop==='sparkle') s+=star(16,22,5,'#F4B740')+star(104,20,4,'#F4B740')+star(100,62,3,'#F7C86A');
+  if(o.prop==='question') s+=`<text x="88" y="22" font-size="18" font-weight="900" fill="#E0558A" font-family="Nunito,sans-serif">?</text><text x="100" y="40" font-size="12" font-weight="900" fill="#F27BA4" font-family="Nunito,sans-serif">?</text>`;
+  if(o.prop==='sweat'||o.prop==='stairs') s+=`<path d="M${hx+13} ${hy-6}q2 3 0 5q-2 -2 0 -5Z" fill="#7CC4E8"/><path d="M${hx-14} ${hy-2}q1.6 2.6 0 4.2q-1.6 -1.6 0 -4.2Z" fill="#7CC4E8"/>`;
+  if(o.prop==='remote') s+=`<rect x="${cx+9}" y="${92+ty}" width="5" height="11" rx="1.5" fill="#3B2531" transform="rotate(-20 ${cx+11} ${97+ty})"/>`;
+  if(o.prop==='zzz') s+=`<text x="84" y="${18+oy}" font-size="12" font-weight="900" fill="#B98BE0" font-family="Nunito,sans-serif">z</text><text x="93" y="${10+oy}" font-size="9" font-weight="900" fill="#B98BE0" font-family="Nunito,sans-serif">z</text>`;
+  if(o.prop==='knee'){ const k=L[1]; s+=`<circle cx="${f1(k[0])}" cy="${f1(k[1])}" r="9" fill="none" stroke="#F4B740" stroke-width="2" stroke-dasharray="3 2"/><circle cx="${f1(k[0])}" cy="${f1(k[1])}" r="13" fill="rgba(244,183,64,.12)"/>`; }
+  if(o.prop==='waves') s+=`<path d="M12 70q5 -5 10 0t10 0M88 76q5 -5 10 0t10 0M14 90q5 -5 10 0t10 0" stroke="#E0558A" stroke-width="2" fill="none" stroke-linecap="round" opacity=".7"/>`;
+  if(o.prop==='calm') s+=`<circle cx="60" cy="${30}" r="40" fill="none" stroke="#F7C5D6" stroke-width="1.2" stroke-dasharray="2 4"/>`;
   return s;
 }
-function fig(o={}){ return `<svg viewBox="0 0 120 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${frame(o)}</svg>`; }
+function fig(o={}){ return `<svg viewBox="${o.vb||'0 0 120 200'}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${frame(o)}</svg>`; }
 function anim(a,b,o={}){ return `<svg class="anim go" viewBox="0 0 120 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g class="fa">${frame(Object.assign({},o,a))}</g><g class="fb">${frame(Object.assign({},o,b))}</g></svg>`; }
 
 const WOMEN = {
@@ -451,10 +500,10 @@ add({id:'goal', phase:0, type:'multi', max:2, q:'What do you want most right now
   opts:[['belly','🎯','Lose the belly'],['firm','💪','Firm up and feel strong'],['energy','⚡','Have more energy'],['posture','🧍‍♀️','Stand taller, less stiffness'],['me','💗','Feel like me again']],
   react:()=>'Love it. Your plan is built around that.', p:3});
 add({id:'body_now', phase:0, type:'img', q:'How would you describe your body today?', light:true,
-  opts:[['slim','Slim',{w:.85}],['avg','Average',{w:1}],['extra','A few extra pounds',{w:1.15,belly:1}],['plus','Plus size',{w:1.32,belly:1}]],
+  opts:[['slim','Slim',{shape:{s:.9,b:.88,wa:.8,h:.84,l:.78}}],['avg','Average',{}],['extra','A few extra pounds',{shape:{s:1.08,b:1.14,wa:1.32,h:1.16,l:1.18},belly:1}],['plus','Plus size',{shape:{s:1.2,b:1.32,wa:1.62,h:1.4,l:1.42},belly:1}]],
   react:"Thanks for being honest. That's where real plans start.", p:2});
 add({id:'body_goal', phase:0, type:'img', q:'And what are you aiming for?', light:true,
-  opts:[['toned','Toned',{w:.95,pose:'overhead'}],['curvy','Curvy and firm',{w:1.1,pose:'overhead'}],['sizes','A few sizes down',{w:1,pose:'overhead'}],['me','Just feel like me',{w:1.05,pose:'overhead'}]],
+  opts:[['toned','Toned',{pose:'flex',shape:{wa:.86,h:.95},def:1,prop:'sparkle',mood:'big'}],['curvy','Curvy and firm',{pose:'hip',shape:{b:1.12,wa:.9,h:1.2,l:1.08}}],['sizes','A few sizes down',{pose:'tape',prop:'tape',mood:'big'}],['me','Just feel like me',{pose:'joy',prop:'hearts',mood:'big'}]],
   react:"Got it. That's your finish line. 🏁", p:2});
 add({id:'zone', phase:0, type:'bodymap', q:'Tap where you want to see change first', p:4});
 add({id:'hormone', phase:0, type:'single', q:'Where are you in your hormone journey?', sub:'This changes how your plan is built.',
@@ -465,7 +514,7 @@ add({id:'hormone_info', phase:0, type:'info', render:()=>{
   const h=A.hormone;
   const big = ['peri','meno','post','unsure'].includes(h);
   return {
-    art: fig({pose:'down',...WOMEN['45-49'],mood:'smile'}),
+    art: fig({...WOMEN[A.age||'45-49'],pose:'belly',mood:'worried',prop:'waves',stick:false}),
     title: big ? `It's not your willpower.<br><span class="hl">It's your hormones.</span>` : `Your body is <span class="hl">changing the rules</span>.`,
     body: big
       ? `<p>After 40, shifting estrogen changes <b>where</b> your body stores fat. Hello, belly. 👋</p><p>That's why the diets and workouts that worked at 30 stop working now.</p>`
@@ -477,9 +526,9 @@ add({id:'weight', phase:0, type:'single', q:'How does your weight usually behave
   opts:[['slow','🐢','I gain fast and lose slow'],['yoyo','🎢','It goes up and down'],['stable','⚖️','It stays pretty stable']],
   react:{slow:"So common after 40. We'll work with it.",yoyo:"Then we'll build a habit that sticks.",stable:'Great base to build on.'}, p:2});
 add({id:'statements', phase:0, type:'statements', p:5, items:[
-  ['stairs','I get out of breath on the stairs',{pose:'slump',mood:'o'}],
-  ['quit','I quit when workouts get too hard or boring',{pose:'down',mood:'flat'}],
-  ['unsure','I never know which exercises are right for my age',{pose:'down',mood:'o'}]
+  ['stairs','I get out of breath on the stairs',{pose:'tired',mood:'o',prop:'stairs'}],
+  ['quit','I quit when workouts get too hard or boring',{pose:'sit',mood:'flat',prop:'remote'}],
+  ['unsure','I never know which exercises are right for my age',{pose:'chin',mood:'worried',prop:'question'}]
 ]});
 add({id:'lvl1', phase:0, type:'level', medal:'🧍‍♀️', badge:'Starting Point Mapped', pct:20});
 
@@ -493,7 +542,7 @@ add({id:'time', phase:1, type:'slider', q:'How much time can you give yourself e
   cap:v=> v<10?'Tiny but mighty.': v<=20?'The sweet spot for busy women.':'Ambitious! We can do that.',
   piece:v=>['time',`${v} min/day`], react:v=>`${v} minutes. That fits even your busiest day.`, p:5});
 add({id:'gentle_info', phase:1, type:'info', render:()=>({
-  art: anim({pose:'stand'},{pose:'overhead'},WOMEN['50-54']),
+  art: anim({pose:'stand'},{pose:'overhead'},Object.assign({},WOMEN[A.age||'50-54'],{prop:'calm'})),
   title:`You don't need <span class="hl">brutal workouts</span>.`,
   body:`<p>After 40, too much high-intensity exercise can push up stress hormones, and stress loves to park itself around the belly.</p><p><b>Gentle, steady, every day</b> beats hard and occasional.</p>`,
   tip:`That's exactly how the Stick Challenge works.`
@@ -505,7 +554,7 @@ add({id:'joints', phase:1, type:'multi', max:2, none:'none', q:'Does anything bo
 add({id:'joints_info', phase:1, type:'info', skipIf:()=> (A.joints||[]).includes('none'), render:()=>{
   const j=(A.joints||[])[0];
   const name={knees:'knees',back:'lower back',shoulders:'shoulders',hips:'hips'}[j]||'joints';
-  return {art: anim({pose:'overhead'},{pose:'squat'},WOMEN['55+']),
+  return {art: anim({pose:'overhead'},{pose:'squat'},Object.assign({},WOMEN[A.age||'55+'],j==='knees'?{prop:'knee'}:{})),
     title:`We've got your <span class="hl">${name}</span>. 🤍`,
     body:`<p>The stick works like a built-in guide. It keeps your back straight and your body aligned, so the moves stay gentle on your ${name}.</p><p>No jumping. No floor burpees. Every move has an easier version.</p>`,
     tip:`Stronger muscles around your ${name} usually means less strain in daily life.`};
@@ -555,7 +604,7 @@ add({id:'lvl4', phase:3, type:'level', medal:'🛡️', badge:'Safety Check Pass
 
 /* ---------- PHASE 4 · PLAN ---------- */
 add({id:'quit_info', phase:4, type:'info', render:()=>({
-  art: anim({pose:'stand'},{pose:'overhead'},WOMEN['40-44']),
+  art: anim({pose:'sit',mood:'flat',prop:'zzz',stick:false},{pose:'stand',mood:'big'},WOMEN[A.age||'40-44']),
   title:`Why do most women quit?<br><span class="hl">They start too hard.</span>`,
   body:`<p>Day 1 feels great. Day 4 hurts. Day 7 you're done.</p><p>Your plan starts gentle and grows with you, so by day 28 it's just part of your day.</p>`,
   tip:`Small and steady is how habits stick.`
@@ -657,7 +706,7 @@ R.multi = sc => {
 
 R.img = sc => {
   main.innerHTML = `<div class="scr">${head(sc)}<div class="grid2">${sc.opts.map(([v,lb,o])=>`
-    <button class="card-img ${sc.light?'light':''}" data-v="${v}"><div class="art">${fig(Object.assign({},WOMEN[A.age||'45-49'],{stick:false,pose:'down'},o))}</div><div class="lbl">${lb}</div></button>`).join('')}</div></div>`;
+    <button class="card-img ${sc.light?'light':''}" data-v="${v}"><div class="art">${fig(Object.assign({},WOMEN[A.age||'45-49'],{stick:false,pose:'down',vb:'16 4 88 192'},o))}</div><div class="lbl">${lb}</div></button>`).join('')}</div></div>`;
   main.querySelectorAll('.card-img').forEach(b=>b.onclick=()=>{
     b.classList.add('sel'); const v=b.dataset.v; A[sc.id]=v; setPts(sc.id,sc.p||0);
     main.querySelectorAll('.card-img').forEach(x=>x.onclick=null);
