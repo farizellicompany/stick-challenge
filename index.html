@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The 28-Day Stick Challenge · Build Your Plan</title>
+<meta name="description" content="A gentle 15-minute stick routine for women over 40. Take the 2-minute quiz and build your personal 28-day plan.">
+<meta property="og:title" content="The 28-Day Stick Challenge">
+<meta property="og:description" content="15 minutes a day. One broom handle. Built for women 40+.">
+<meta name="theme-color" content="#FFF4F7">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23F27BA4'/><line x1='18' y1='70' x2='82' y2='30' stroke='%23fff' stroke-width='10' stroke-linecap='round'/></svg>">
+<style>
+:root{
+  --bg:#FFF4F7; --card:#FFFFFF; --soft:#FFE4EC; --soft2:#FFD3E0;
+  --pink:#F27BA4; --pink-d:#E0558A; --ink:#3B2531; --muted:#8C6E7C;
+  --line:#F6D5E0; --ok:#33B08A; --gold:#F4B740; --wood:#C08A5B;
+  --r:18px; --shadow:0 6px 20px rgba(224,85,138,.12);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Nunito,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-weight:600}
+body{min-height:100dvh}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+#app{max-width:480px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;position:relative;padding-bottom:96px}
+
+/* Header */
+.hdr{position:sticky;top:0;z-index:20;background:var(--bg);padding:12px 16px 8px}
+.hdr-top{display:flex;align-items:center;gap:10px}
+.back{width:36px;height:36px;border-radius:12px;background:var(--soft);display:grid;place-items:center;font-size:18px;color:var(--pink-d);flex:none}
+.back[hidden]{visibility:hidden;display:grid}
+.brand{flex:1;text-align:center;font-weight:900;letter-spacing:.06em;font-size:13px;color:var(--pink-d);text-transform:uppercase}
+.score-mini{width:44px;height:44px;flex:none;position:relative}
+.score-mini svg{transform:rotate(-90deg)}
+.score-mini b{position:absolute;inset:0;display:grid;place-items:center;font-size:13px;font-weight:900;color:var(--pink-d)}
+.phases{display:flex;gap:6px;margin-top:10px}
+.ph{flex:1}
+.ph-bar{height:6px;border-radius:6px;background:var(--soft);overflow:hidden}
+.ph-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--pink-d));border-radius:6px;transition:width .4s}
+.ph-lbl{font-size:10px;text-align:center;margin-top:4px;color:var(--muted);font-weight:800;white-space:nowrap}
+.ph.on .ph-lbl{color:var(--pink-d)}
+
+/* Plan card */
+.plan{margin:6px 16px 4px;background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:10px 12px;box-shadow:var(--shadow)}
+.plan-h{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:900;color:var(--ink)}
+.plan-h span{color:var(--pink-d)}
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
+.chip{height:30px;border-radius:10px;background:#F7EEF2;border:1.5px dashed #EBCFDA;font-size:10.5px;display:flex;align-items:center;justify-content:center;padding:0 4px;text-align:center;line-height:1.05;color:#C9AAB8;font-weight:800;overflow:hidden}
+.chip.on{background:var(--soft);border:1.5px solid var(--soft2);color:var(--ink);animation:pop .45s}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+
+/* Screen */
+main{flex:1;padding:8px 16px 16px}
+.scr{animation:in .35s ease}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+h1{font-size:26px;line-height:1.15;margin:8px 0 8px;font-weight:900;letter-spacing:-.01em}
+h2{font-size:23px;line-height:1.2;margin:10px 0 6px;font-weight:900}
+.sub{color:var(--muted);font-size:15px;margin:0 0 14px;line-height:1.4}
+.hl{color:var(--pink-d)}
+p{line-height:1.5}
+
+.opts{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);border:2px solid var(--line);border-radius:var(--r);padding:15px 16px;font-size:16px;font-weight:800;transition:transform .12s,border-color .2s,background .2s;box-shadow:0 2px 0 rgba(224,85,138,.06)}
+.opt:active{transform:scale(.98)}
+.opt.sel{border-color:var(--pink);background:#FFF0F5}
+.opt .ic{font-size:20px;width:26px;text-align:center;flex:none}
+.opt .ck{margin-left:auto;width:22px;height:22px;border-radius:7px;border:2px solid var(--soft2);flex:none;display:grid;place-items:center;font-size:13px;color:#fff}
+.opt.sel .ck{background:var(--pink);border-color:var(--pink)}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.card-img{background:var(--card);border:2px solid var(--line);border-radius:var(--r);overflow:hidden;padding:0;display:flex;flex-direction:column;align-items:stretch;transition:transform .12s,border-color .2s}
+.card-img:active{transform:scale(.97)}
+.card-img.sel{border-color:var(--pink)}
+.card-img .art{background:linear-gradient(180deg,#FFE9F0,#FFF7FA);height:150px;display:flex;align-items:flex-end;justify-content:center}
+.card-img .art svg{height:140px}
+.card-img .lbl{padding:11px 10px;font-weight:900;font-size:15px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(90deg,var(--pink),var(--pink-d));color:#fff}
+.card-img.light .lbl{background:#fff;color:var(--ink)}
+.card-img.light.sel .lbl{background:var(--pink);color:#fff}
+
+/* Cover */
+.cover h1{text-align:center;font-size:28px;margin-top:4px}
+.cover .sub{text-align:center}
+.badges{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin:6px 0 14px}
+.badge{font-size:12px;font-weight:800;background:var(--soft);color:var(--pink-d);padding:6px 10px;border-radius:99px}
+.foot-note{text-align:center;font-size:12px;color:var(--muted);margin-top:16px}
+
+/* CTA */
+.cta-bar{position:fixed;left:0;right:0;bottom:0;z-index:30;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(180deg,rgba(255,244,247,0),var(--bg) 35%)}
+.cta-bar .in{max-width:448px;margin:0 auto}
+.cta{width:100%;padding:17px;border-radius:16px;background:linear-gradient(90deg,var(--pink),var(--pink-d));color:#fff;font-size:17px;font-weight:900;letter-spacing:.01em;box-shadow:0 8px 20px rgba(224,85,138,.35);transition:opacity .2s,transform .1s}
+.cta:active{transform:scale(.98)}
+.cta:disabled{opacity:.45;box-shadow:none}
+.cta.pulse{animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 8px 20px rgba(224,85,138,.35)}50%{box-shadow:0 8px 32px rgba(224,85,138,.6)}}
+
+/* Info / persuasion */
+.info-art{background:linear-gradient(180deg,#FFE3EC,#FFF4F7);border-radius:24px;display:flex;justify-content:center;padding:14px 0 0;margin:6px 0 16px}
+.info-art svg{height:190px}
+.info p{font-size:17px}
+.tip{background:var(--card);border-left:5px solid var(--pink);border-radius:14px;padding:14px 16px;margin-top:12px;font-size:15px;box-shadow:var(--shadow)}
+
+/* Toast reaction */
+.toast{position:fixed;left:50%;bottom:110px;transform:translate(-50%,20px);opacity:0;z-index:50;background:var(--ink);color:#fff;padding:12px 18px;border-radius:16px;font-weight:800;font-size:15px;max-width:88%;text-align:center;transition:all .3s;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* Slider */
+.slider-wrap{background:var(--card);border-radius:22px;padding:22px 18px;border:2px solid var(--line);margin-top:10px;text-align:center}
+.slider-emoji{font-size:56px;line-height:1;transition:transform .2s}
+.slider-val{font-size:34px;font-weight:900;color:var(--pink-d);margin:6px 0 2px}
+.slider-cap{color:var(--muted);font-size:14px;min-height:20px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:10px;border-radius:10px;background:var(--soft);margin:20px 0 8px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:32px;height:32px;border-radius:50%;background:#fff;border:4px solid var(--pink);box-shadow:0 3px 10px rgba(224,85,138,.4)}
+input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;background:#fff;border:4px solid var(--pink)}
+.range-lbls{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);font-weight:800}
+
+/* Statements / swipe */
+.stack{position:relative;height:360px;margin-top:10px}
+.sw{position:absolute;inset:0;background:var(--card);border-radius:24px;border:2px solid var(--line);box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;touch-action:pan-y;user-select:none;transition:transform .35s,opacity .35s}
+.sw .art{height:180px;display:flex;align-items:flex-end}
+.sw .art svg{height:180px}
+.sw .t{font-size:20px;font-weight:900;margin-top:10px;line-height:1.25}
+.sw .s{font-size:13px;color:var(--muted);margin-top:4px}
+.sw .stamp{position:absolute;top:18px;padding:6px 12px;border-radius:10px;font-weight:900;font-size:18px;border:3px solid;opacity:0;transform:rotate(-10deg)}
+.sw .stamp.y{left:18px;color:var(--ok);border-color:var(--ok)}
+.sw .stamp.n{right:18px;color:#D9534F;border-color:#D9534F;transform:rotate(10deg)}
+.sw-btns{display:flex;justify-content:center;gap:26px;margin-top:16px}
+.sw-btn{width:66px;height:66px;border-radius:50%;background:#fff;box-shadow:var(--shadow);font-size:28px;display:grid;place-items:center;border:2px solid var(--line)}
+.sw-btn.y{color:var(--pink-d)}
+.sw-count{text-align:center;color:var(--muted);font-size:13px;font-weight:800;margin-top:6px}
+.sw-btn-lbl{display:flex;justify-content:center;gap:40px;font-size:12px;color:var(--muted);font-weight:800;margin-top:6px}
+
+/* Body map */
+.bodymap{position:relative;width:260px;margin:4px auto 0}
+.bodymap svg{width:100%;display:block}
+.zone{position:absolute;border-radius:50%;border:2.5px dashed var(--pink);background:rgba(242,123,164,.12);display:grid;place-items:center;font-size:12px;font-weight:900;color:var(--pink-d);animation:breathe 2s infinite}
+.zone.sel{background:var(--pink);color:#fff;border-style:solid;animation:none}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+
+/* Level up */
+.lvl{text-align:center;padding-top:10px}
+.lvl .medal{width:120px;height:120px;margin:10px auto 6px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFE9A8,var(--gold));display:grid;place-items:center;font-size:56px;box-shadow:0 0 0 10px #FFF0C9,0 14px 30px rgba(244,183,64,.4);animation:medal .7s cubic-bezier(.2,1.6,.4,1)}
+@keyframes medal{from{transform:scale(0) rotate(-40deg)}to{transform:none}}
+.lvl .kicker{font-size:13px;font-weight:900;letter-spacing:.08em;color:var(--pink-d);text-transform:uppercase;margin-top:14px}
+.big-score{display:flex;align-items:center;justify-content:center;gap:14px;margin:18px auto 6px;background:var(--card);border-radius:20px;padding:14px 18px;box-shadow:var(--shadow);width:max-content}
+.big-score .n{font-size:40px;font-weight:900;color:var(--pink-d)}
+.big-score .l{text-align:left;font-size:13px;color:var(--muted);line-height:1.3}
+.progress-note{margin-top:10px;font-weight:800}
+
+/* Confetti */
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden}
+.confetti i{position:absolute;top:-12px;width:9px;height:14px;border-radius:2px;animation:fall 1.4s ease-in forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(540deg);opacity:.2}}
+
+/* Challenge */
+.timer{width:210px;height:210px;margin:6px auto;position:relative}
+.timer svg.ring{transform:rotate(-90deg);position:absolute;inset:0}
+.timer .fig{position:absolute;inset:22px;display:flex;align-items:flex-end;justify-content:center;border-radius:50%;background:#FFF0F5;overflow:hidden}
+.timer .fig svg{height:150px}
+.timer .num{position:absolute;right:-6px;top:-6px;background:var(--pink);color:#fff;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;font-size:22px;font-weight:900;box-shadow:var(--shadow)}
+
+/* Loading checklist */
+.load-ring{width:150px;height:150px;margin:16px auto;position:relative}
+.load-ring svg{transform:rotate(-90deg)}
+.load-ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:32px;font-weight:900;color:var(--pink-d)}
+.checks{list-style:none;padding:0;margin:14px 0 0;display:flex;flex-direction:column;gap:10px}
+.checks li{display:flex;align-items:center;gap:10px;font-weight:800;color:#C9AAB8;transition:color .3s}
+.checks li .d{width:24px;height:24px;border-radius:50%;border:2px solid var(--soft2);display:grid;place-items:center;font-size:13px;color:#fff;flex:none;transition:all .3s}
+.checks li.done{color:var(--ink)}
+.checks li.done .d{background:var(--ok);border-color:var(--ok)}
+.rot{margin-top:18px;background:var(--card);border-radius:16px;padding:14px 16px;font-size:14px;color:var(--muted);min-height:66px;box-shadow:var(--shadow);transition:opacity .3s}
+
+/* Diagnosis */
+.bars{display:flex;flex-direction:column;gap:12px;margin:14px 0}
+.bar-row .top{display:flex;justify-content:space-between;font-weight:900;font-size:15px}
+.bar-row .track{height:12px;border-radius:12px;background:var(--soft);margin-top:6px;overflow:hidden}
+.bar-row .track i{display:block;height:100%;width:0;border-radius:12px;background:linear-gradient(90deg,var(--pink),var(--pink-d));transition:width 1.1s ease}
+.bar-row:first-child .track i{background:linear-gradient(90deg,#F59E6B,#E0558A)}
+.explain{background:var(--card);border-radius:18px;padding:16px;box-shadow:var(--shadow);font-size:15px;line-height:1.5}
+.explain b{color:var(--pink-d)}
+
+/* Inputs */
+.field{width:100%;padding:17px 16px;border-radius:16px;border:2px solid var(--line);font:inherit;font-size:18px;font-weight:800;background:#fff;color:var(--ink);outline:none}
+.field:focus{border-color:var(--pink)}
+.gift{background:linear-gradient(135deg,#FFE4EC,#FFF4F7);border:2px dashed var(--pink);border-radius:20px;padding:16px;display:flex;gap:12px;align-items:center;margin:10px 0 16px}
+.gift .g{font-size:42px}
+.small{font-size:12px;color:var(--muted);line-height:1.45;margin-top:12px}
+.err{color:#D9534F;font-size:13px;font-weight:800;min-height:18px;margin-top:6px}
+
+/* Score reveal */
+.score-big{width:220px;height:220px;margin:8px auto;position:relative}
+.score-big svg{transform:rotate(-90deg)}
+.score-big .c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-big .c b{font-size:58px;font-weight:900;color:var(--pink-d);line-height:1}
+.score-big .c span{font-size:13px;color:var(--muted);font-weight:800}
+.fit-tag{display:inline-block;background:var(--ok);color:#fff;font-weight:900;padding:6px 14px;border-radius:99px;font-size:14px}
+.breakdown{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+.breakdown div{background:var(--card);border-radius:14px;padding:12px;font-weight:800;font-size:14px;box-shadow:var(--shadow)}
+
+/* Future self */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.compare .col{background:var(--card);border-radius:20px;padding:12px;box-shadow:var(--shadow);text-align:center}
+.compare .col .art{height:170px;display:flex;align-items:flex-end;justify-content:center;background:#FFF0F5;border-radius:14px}
+.compare .col .art svg{height:160px}
+.compare .col h4{margin:10px 0 6px;font-size:14px;letter-spacing:.06em;text-transform:uppercase}
+.meter{display:flex;gap:3px;margin:4px 0 8px}
+.meter i{flex:1;height:7px;border-radius:4px;background:var(--soft)}
+.meter i.on{background:var(--pink)}
+.mlbl{font-size:12px;text-align:left;color:var(--muted);font-weight:800}
+
+/* Calendar */
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:12px}
+.cal div{aspect-ratio:1;border-radius:10px;background:var(--card);display:grid;place-items:center;font-weight:900;font-size:13px;color:#C9AAB8;border:1.5px solid var(--line)}
+.cal div.d1{background:var(--pink);color:#fff;border-color:var(--pink);animation:glow 1.5s infinite;cursor:pointer}
+.cal div.wk{color:var(--muted)}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(242,123,164,.6)}50%{box-shadow:0 0 0 8px rgba(242,123,164,0)}}
+.week-lbl{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px;font-size:11px;font-weight:900;text-align:center;color:var(--pink-d)}
+.modal{position:fixed;inset:0;background:rgba(59,37,49,.45);z-index:70;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:#fff;border-radius:24px 24px 0 0;padding:22px 18px calc(22px + env(safe-area-inset-bottom));width:100%;max-width:480px;animation:up .3s}
+@keyframes up{from{transform:translateY(100%)}to{transform:none}}
+.moves-list{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.moves-list div{display:flex;align-items:center;gap:10px;background:#FFF0F5;border-radius:12px;padding:10px 12px;font-weight:800}
+
+/* Scratch */
+.scratch{position:relative;width:300px;height:190px;margin:14px auto;border-radius:20px;overflow:hidden;box-shadow:var(--shadow)}
+.scratch .prize{position:absolute;inset:0;background:linear-gradient(135deg,#FFF,#FFE4EC);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16px}
+.scratch .prize b{font-size:22px;color:var(--pink-d);line-height:1.2}
+.scratch .prize span{font-size:13px;color:var(--muted);margin-top:6px;font-weight:800}
+.scratch canvas{position:absolute;inset:0;touch-action:none;cursor:pointer}
+
+/* Offer */
+.offer h1{font-size:25px}
+.box{background:var(--card);border-radius:22px;padding:16px;box-shadow:var(--shadow);margin:14px 0}
+.price-box{border:2.5px solid var(--pink);position:relative;padding-top:24px}
+.price-box .ribbon{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--pink);color:#fff;font-size:12px;font-weight:900;padding:5px 12px;border-radius:99px;white-space:nowrap}
+.price-row{display:flex;justify-content:space-between;align-items:center}
+.price-row .nm{font-weight:900;font-size:17px}
+.price-row .nm small{display:block;color:var(--muted);font-size:12px;font-weight:800;margin-top:2px}
+.price{font-size:38px;font-weight:900;color:var(--pink-d);line-height:1}
+.per-day{font-size:12px;color:var(--muted);text-align:right;font-weight:800}
+.incl{list-style:none;padding:0;margin:14px 0 0;display:flex;flex-direction:column;gap:8px}
+.incl li{display:flex;gap:8px;font-size:15px;font-weight:700}
+.incl li:before{content:"✓";color:var(--ok);font-weight:900}
+.incl li.bonus{background:#FFF0F5;border-radius:10px;padding:8px 10px;font-weight:900}
+.incl li.bonus:before{content:"🎁"}
+.guar{display:flex;gap:12px;align-items:flex-start}
+.guar .seal{flex:none;width:62px;height:62px;border-radius:50%;background:var(--ok);color:#fff;display:grid;place-items:center;font-weight:900;font-size:12px;text-align:center;line-height:1.05}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px}
+.vs .c{border-radius:16px;padding:12px}
+.vs .bad{background:#F5EEF1;color:var(--muted)}
+.vs .good{background:var(--soft);font-weight:800}
+.vs ul{margin:6px 0 0;padding-left:16px}
+.vs li{margin:5px 0}
+.faq details{background:var(--card);border-radius:14px;padding:14px 16px;margin-bottom:8px;box-shadow:0 2px 8px rgba(224,85,138,.06)}
+.faq summary{font-weight:900;cursor:pointer;list-style:none}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary:after{content:"+";float:right;color:var(--pink-d)}
+.faq details[open] summary:after{content:"–"}
+.faq p{margin:8px 0 0;color:var(--muted);font-size:14px}
+.disc{font-size:11px;color:var(--muted);text-align:center;line-height:1.5;margin:18px 4px 0}
+.plan-full .chips{grid-template-columns:repeat(2,1fr)}
+.plan-full .chip{height:36px;font-size:13px}
+
+/* Stick animation frames */
+.anim .fa,.anim .fb{transform-box:fill-box}
+.anim .fb{opacity:0}
+.anim.go .fa{animation:fa 1.6s infinite steps(1)}
+.anim.go .fb{animation:fb 1.6s infinite steps(1)}
+@keyframes fa{0%{opacity:1}50%{opacity:0}}
+@keyframes fb{0%{opacity:0}50%{opacity:1}}
+.hold-shake{animation:shake .25s infinite}
+@keyframes shake{0%,100%{transform:translateX(0)}50%{transform:translateX(1.5px)}}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="hdr" id="hdr" hidden>
+    <div class="hdr-top">
+      <button class="back" id="back" aria-label="Back">←</button>
+      <div class="brand">Stick Challenge</div>
+      <div class="score-mini" title="Stick Score">
+        <svg width="44" height="44" viewBox="0 0 44 44"><circle cx="22" cy="22" r="18" fill="none" stroke="#FFE4EC" stroke-width="5"/><circle id="ringMini" cx="22" cy="22" r="18" fill="none" stroke="#E0558A" stroke-width="5" stroke-linecap="round" stroke-dasharray="113.1" stroke-dashoffset="113.1" style="transition:stroke-dashoffset .6s"/></svg>
+        <b id="scoreMini">0</b>
+      </div>
+    </div>
+    <div class="phases" id="phases"></div>
+  </header>
+  <section class="plan" id="plan" hidden></section>
+  <main id="main"></main>
+  <div class="cta-bar" id="ctaBar" hidden><div class="in"><button class="cta" id="cta">Continue</button></div></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= CONFIG ================= */
+const CONFIG = {
+  CHECKOUT_URL: "https://checkout.example.com/stick-challenge", // TODO: link do checkout ($19)
+  LEAD_WEBHOOK: "",          // TODO opcional: URL que recebe {email,name,...} por POST (Zapier/Make/ActiveCampaign)
+  PRICE: 19,
+  META_PIXEL_ID: ""          // TODO: ID do pixel da Meta
+};
+
+/* ================= TRACKING ================= */
+if (CONFIG.META_PIXEL_ID) {
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', CONFIG.META_PIXEL_ID); fbq('track','PageView');
+}
+function track(ev, params={}){
+  const p = Object.assign({phase:A.hormone||'', joint:(A.joints||[])[0]||'', score:score}, params);
+  try{ if(window.fbq){ ['Lead','InitiateCheckout','ViewContent'].includes(ev) ? fbq('track',ev,p) : fbq('trackCustom',ev,p);} }catch(e){}
+  try{ (window.dataLayer=window.dataLayer||[]).push(Object.assign({event:ev},p)); }catch(e){}
+}
+const UTM = Object.fromEntries(new URLSearchParams(location.search));
+
+/* ================= ILLUSTRATIONS (SVG) ================= */
+const SKIN = ['#F3C9AE','#E8B08C','#C68863','#8D5B3F'];
+function limb(x1,y1,x2,y2,c,w){return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`}
+function poly(pts,c,w){return `<polyline points="${pts}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`}
+/* one frame of a woman. pose: stand | down | overhead | squat | lunge | twistL | twistR | slump */
+function frame(o){
+  const w=o.w||1, sk=o.skin||SKIN[0], hr=o.hair||'#5B3A2C', top=o.top||'#F27BA4', bot=o.bottom||'#7D5C79', st='#C08A5B';
+  const pose=o.pose||'stand';
+  let dy = pose==='squat'?24:(pose==='lunge'?14:0);
+  const cx=60+(pose==='twistL'?-3:pose==='twistR'?3:0);
+  const sh=15*w, hip=9*w, lw=11*w, aw=7*w;
+  const hy=30+dy, ny=44+dy, ty=48+dy, by=104+dy;
+  let s='';
+  // legs
+  if(pose==='squat'){
+    s+=poly(`${60-hip},${by} ${60-hip-20},${by+22} ${60-hip-14},${190}`,bot,lw);
+    s+=poly(`${60+hip},${by} ${60+hip+20},${by+22} ${60+hip+14},${190}`,bot,lw);
+  } else if(pose==='lunge'){
+    s+=poly(`${60-hip},${by} ${30},${by+30} ${30},${190}`,bot,lw);
+    s+=poly(`${60+hip},${by} ${84},${by+40} ${104},${186}`,bot,lw);
+  } else {
+    s+=limb(60-hip,by,60-hip-2,188,bot,lw); s+=limb(60+hip,by,60+hip+2,188,bot,lw);
+  }
+  // shoes
+  const fx = pose==='squat'?[60-hip-14,60+hip+14]:pose==='lunge'?[30,104]:[60-hip-2,60+hip+2];
+  s+=`<ellipse cx="${fx[0]-3}" cy="192" rx="9" ry="4.5" fill="#fff" stroke="#EBCFDA" stroke-width="1.5"/><ellipse cx="${fx[1]+3}" cy="192" rx="9" ry="4.5" fill="#fff" stroke="#EBCFDA" stroke-width="1.5"/>`;
+  // torso
+  const tw=30*w + (o.belly?6:0);
+  const slump = pose==='slump';
+  s+=`<rect x="${cx-tw/2}" y="${ty}" width="${tw}" height="${60}" rx="${12*w}" fill="${top}" ${slump?`transform="rotate(6 ${cx} ${ty+60})"`:''}/>`;
+  s+=`<rect x="${60-tw/2-1}" y="${by-8}" width="${tw+2}" height="16" rx="7" fill="${bot}"/>`;
+  // arms + stick
+  const sy=ty+6, lx=cx-sh, rx=cx+sh;
+  if(pose==='overhead'||pose==='squat'){
+    s+=poly(`${lx},${sy} ${lx-12},${sy-22} ${cx-26},${8+dy*0.3}`,sk,aw);
+    s+=poly(`${rx},${sy} ${rx+12},${sy-22} ${cx+26},${8+dy*0.3}`,sk,aw);
+    if(o.stick!==false) s+=limb(cx-48,8+dy*0.3,cx+48,8+dy*0.3,st,4.5);
+  } else if(pose==='lunge'){
+    s+=poly(`${lx},${sy} ${lx-14},${sy-20} ${cx-24},${12+dy*0.3}`,sk,aw);
+    s+=poly(`${rx},${sy} ${rx+14},${sy-20} ${cx+24},${12+dy*0.3}`,sk,aw);
+    if(o.stick!==false) s+=limb(cx-46,12+dy*0.3,cx+46,12+dy*0.3,st,4.5);
+  } else if(pose==='twistL'||pose==='twistR'){
+    const k = pose==='twistL'?-1:1;
+    s+=limb(lx,sy,cx-20+k*10,sy+14,sk,aw); s+=limb(rx,sy,cx+20+k*10,sy+14,sk,aw);
+    if(o.stick!==false) s+=limb(cx-44+k*16,sy+14-k*10,cx+44+k*16,sy+14+k*10,st,4.5);
+  } else if(pose==='down'||pose==='slump'){
+    s+=limb(lx,sy,lx-4,sy+50,sk,aw); s+=limb(rx,sy,rx+4,sy+50,sk,aw);
+    if(o.stick) s+=limb(rx+4,sy+50-60,rx+6,sy+50+40,st,4.5);
+  } else { // stand holding stick at hips
+    s+=poly(`${lx},${sy} ${lx-6},${sy+30} ${cx-20},${sy+52}`,sk,aw);
+    s+=poly(`${rx},${sy} ${rx+6},${sy+30} ${cx+20},${sy+52}`,sk,aw);
+    if(o.stick!==false) s+=limb(cx-46,sy+52,cx+46,sy+52,st,4.5);
+  }
+  // neck + head
+  const hx = cx + (slump?4:0), hyy = hy + (slump?5:0);
+  s+=`<rect x="${hx-4}" y="${hyy+8}" width="8" height="10" rx="3" fill="${sk}"/>`;
+  s+=`<ellipse cx="${hx}" cy="${hyy-2}" rx="${o.short?15:17}" ry="${o.short?15:18}" fill="${hr}"/>`;
+  if(!o.short) s+=`<path d="M${hx-15} ${hyy} Q${hx-19} ${hyy+22} ${hx-10} ${hyy+26} L${hx+10} ${hyy+26} Q${hx+19} ${hyy+22} ${hx+15} ${hyy} Z" fill="${hr}"/>`;
+  if(o.bun) s+=`<circle cx="${hx}" cy="${hyy-19}" r="7" fill="${hr}"/>`;
+  s+=`<circle cx="${hx}" cy="${hyy+2}" r="12.5" fill="${sk}"/>`;
+  s+=`<path d="M${hx-13} ${hyy-2} Q${hx-6} ${hyy-14} ${hx+13} ${hyy-4} Q${hx+8} ${hyy-16} ${hx-2} ${hyy-15} Q${hx-12} ${hyy-13} ${hx-13} ${hyy-2}Z" fill="${hr}"/>`;
+  // face
+  const mood = o.mood||'smile';
+  s+=`<circle cx="${hx-4.5}" cy="${hyy+2}" r="1.4" fill="#3B2531"/><circle cx="${hx+4.5}" cy="${hyy+2}" r="1.4" fill="#3B2531"/>`;
+  s+= mood==='smile' ? `<path d="M${hx-4} ${hyy+7} Q${hx} ${hyy+10.5} ${hx+4} ${hyy+7}" stroke="#B5546F" stroke-width="1.6" fill="none" stroke-linecap="round"/>`
+     : mood==='flat' ? `<line x1="${hx-3.5}" y1="${hyy+8}" x2="${hx+3.5}" y2="${hyy+8}" stroke="#B5546F" stroke-width="1.6" stroke-linecap="round"/>`
+     : `<circle cx="${hx}" cy="${hyy+8}" r="2.2" fill="#B5546F"/>`;
+  s+=`<circle cx="${hx-8}" cy="${hyy+6}" r="2.4" fill="#F59BB8" opacity=".55"/><circle cx="${hx+8}" cy="${hyy+6}" r="2.4" fill="#F59BB8" opacity=".55"/>`;
+  return s;
+}
+function fig(o={}){ return `<svg viewBox="0 0 120 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${frame(o)}</svg>`; }
+function anim(a,b,o={}){ return `<svg class="anim go" viewBox="0 0 120 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g class="fa">${frame(Object.assign({},o,a))}</g><g class="fb">${frame(Object.assign({},o,b))}</g></svg>`; }
+
+const WOMEN = {
+  '40-44':{skin:SKIN[0],hair:'#4A2E22',top:'#F27BA4',bottom:'#7D5C79'},
+  '45-49':{skin:SKIN[2],hair:'#2B1C17',top:'#F59E6B',bottom:'#5E4A6A',bun:true},
+  '50-54':{skin:SKIN[1],hair:'#C99A5B',top:'#B98BE0',bottom:'#6A5A7A'},
+  '55+':  {skin:SKIN[0],hair:'#CFC7CC',top:'#62B6A5',bottom:'#6E5F6E',short:true}
+};
+const MOVES = {
+  squat:{name:'Stick Squat', a:{pose:'overhead'}, b:{pose:'squat'}, desc:'Arms up, sit back, stand tall'},
+  reach:{name:'Overhead Reach', a:{pose:'stand'}, b:{pose:'overhead'}, desc:'Lift the stick, squeeze, lower slowly'},
+  twist:{name:'Standing Twist', a:{pose:'twistL'}, b:{pose:'twistR'}, desc:'Turn from your waist, hips stay still'},
+  lunge:{name:'Stick Lunge', a:{pose:'overhead'}, b:{pose:'lunge'}, desc:'Step back, lower gently, come up'}
+};
+
+/* ================= STATE ================= */
+const A = {};          // answers
+let score = 0;          // Stick Score (fit), computed from answers
+const pts = {};         // points by screen id
+let idx = 0; const hist = [];
+const PHASES = ['Body','Program','Blockers','Safety','Plan'];
+const SLOTS = [
+  ['zone','🎯','Focus'],['hormone','🌙','Hormones'],['intensity','🔥','Intensity'],['time','⏱','Time'],
+  ['joints','🦵','Joints'],['place','🏠','Place'],['sleep','😴','Sleep'],['safety','✅','Safety']
+];
+const plan = {};        // slot -> label
+
+/* ================= HELPERS ================= */
+const $ = s => document.querySelector(s);
+const main = $('#main');
+function setPts(id,v){ pts[id]=v; score = Math.min(96, Object.values(pts).reduce((a,b)=>a+b,0)); renderScore(); }
+function renderScore(){ $('#scoreMini').textContent = score; $('#ringMini').style.strokeDashoffset = 113.1*(1-score/100); }
+function setPiece(slot,label){ plan[slot]=label; renderPlan(slot); }
+function renderPlan(justSet){
+  const filled = SLOTS.filter(s=>plan[s[0]]).length;
+  const nm = A.name ? `${esc(A.name)}'s Stick Plan` : 'Your Stick Plan';
+  $('#plan').innerHTML = `<div class="plan-h">${nm}<span>${filled}/8 built</span></div><div class="chips">${
+    SLOTS.map(([k,ic,lb])=>`<div class="chip ${plan[k]?'on':''}" ${justSet===k?'':'style="animation:none"'}>${plan[k]?ic+' '+plan[k]:lb}</div>`).join('')}</div>`;
+}
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+let toastT;
+function toast(msg,ms=1300){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),ms); }
+function confetti(){
+  const c=document.createElement('div'); c.className='confetti';
+  const cols=['#F27BA4','#E0558A','#F4B740','#62B6A5','#B98BE0','#FFD3E0'];
+  for(let i=0;i<46;i++){ const p=document.createElement('i'); p.style.left=Math.random()*100+'%'; p.style.background=cols[i%cols.length]; p.style.animationDelay=(Math.random()*.4)+'s'; p.style.transform=`rotate(${Math.random()*180}deg)`; c.appendChild(p); }
+  document.body.appendChild(c); setTimeout(()=>c.remove(),2200);
+}
+function cta(label, enabled=true, fn=next, pulse=false){
+  const bar=$('#ctaBar'), b=$('#cta');
+  if(!label){ bar.hidden=true; return; }
+  bar.hidden=false; b.textContent=label; b.disabled=!enabled; b.onclick=fn; b.classList.toggle('pulse',pulse);
+}
+function nameOr(fallback=''){ return A.name ? A.name : fallback; }
+
+/* ================= SCREENS ================= */
+const S = [];
+const add = o => S.push(o);
+
+/* ---------- PHASE 0 · BODY ---------- */
+add({id:'age', phase:0, type:'cover'});
+add({id:'tried_stick', phase:0, type:'single', q:'Have you ever worked out with a stick?',
+  opts:[['yes','👍','Yes, a few times'],['no','🙋‍♀️','No, never']],
+  react:{yes:"Nice. You'll feel right at home.", no:"Perfect. Every move is made for first-timers."}, p:2});
+add({id:'goal', phase:0, type:'multi', max:2, q:'What do you want most right now?', sub:'Pick up to 2',
+  opts:[['belly','🎯','Lose the belly'],['firm','💪','Firm up and feel strong'],['energy','⚡','Have more energy'],['posture','🧍‍♀️','Stand taller, less stiffness'],['me','💗','Feel like me again']],
+  react:()=>'Love it. Your plan is built around that.', p:3});
+add({id:'body_now', phase:0, type:'img', q:'How would you describe your body today?', light:true,
+  opts:[['slim','Slim',{w:.85}],['avg','Average',{w:1}],['extra','A few extra pounds',{w:1.15,belly:1}],['plus','Plus size',{w:1.32,belly:1}]],
+  react:"Thanks for being honest. That's where real plans start.", p:2});
+add({id:'body_goal', phase:0, type:'img', q:'And what are you aiming for?', light:true,
+  opts:[['toned','Toned',{w:.95,pose:'overhead'}],['curvy','Curvy and firm',{w:1.1,pose:'overhead'}],['sizes','A few sizes down',{w:1,pose:'overhead'}],['me','Just feel like me',{w:1.05,pose:'overhead'}]],
+  react:"Got it. That's your finish line. 🏁", p:2});
+add({id:'zone', phase:0, type:'bodymap', q:'Tap where you want to see change first', p:4});
+add({id:'hormone', phase:0, type:'single', q:'Where are you in your hormone journey?', sub:'This changes how your plan is built.',
+  opts:[['regular','🌸','Still regular cycles'],['peri','🌗','Perimenopause'],['meno','🌙','Menopause'],['post','✨','Post-menopause'],['unsure','🤷‍♀️',"I'm not sure"]],
+  piece:v=>['hormone',{regular:'Cycle-smart',peri:'Peri-smart',meno:'Meno-smart',post:'Post-meno',unsure:'Hormone-smart'}[v]],
+  react:{regular:'Noted. Your plan follows your energy.',peri:'That explains a lot. Keep going.',meno:'That explains a lot. Keep going.',post:'Noted. Your plan is built for this stage.',unsure:"No problem. We'll keep it hormone-smart."}, p:6});
+add({id:'hormone_info', phase:0, type:'info', render:()=>{
+  const h=A.hormone;
+  const big = ['peri','meno','post','unsure'].includes(h);
+  return {
+    art: fig({pose:'down',...WOMEN['45-49'],mood:'smile'}),
+    title: big ? `It's not your willpower.<br><span class="hl">It's your hormones.</span>` : `Your body is <span class="hl">changing the rules</span>.`,
+    body: big
+      ? `<p>After 40, shifting estrogen changes <b>where</b> your body stores fat. Hello, belly. 👋</p><p>That's why the diets and workouts that worked at 30 stop working now.</p>`
+      : `<p>Even before menopause, your 40s bring hormone shifts that make the belly harder to lose.</p><p>The good news: your plan is built for this from day one.</p>`,
+    tip: `Your plan is built around this, not against it.`
+  };
+}});
+add({id:'weight', phase:0, type:'single', q:'How does your weight usually behave?',
+  opts:[['slow','🐢','I gain fast and lose slow'],['yoyo','🎢','It goes up and down'],['stable','⚖️','It stays pretty stable']],
+  react:{slow:"So common after 40. We'll work with it.",yoyo:"Then we'll build a habit that sticks.",stable:'Great base to build on.'}, p:2});
+add({id:'statements', phase:0, type:'statements', p:5, items:[
+  ['stairs','I get out of breath on the stairs',{pose:'slump',mood:'o'}],
+  ['quit','I quit when workouts get too hard or boring',{pose:'down',mood:'flat'}],
+  ['unsure','I never know which exercises are right for my age',{pose:'down',mood:'o'}]
+]});
+add({id:'lvl1', phase:0, type:'level', medal:'🧍‍♀️', badge:'Starting Point Mapped', pct:20});
+
+/* ---------- PHASE 1 · PROGRAM ---------- */
+add({id:'intensity', phase:1, type:'single', q:'How intense do you want it?',
+  opts:[['gentle','😌','Gentle and easy'],['sweat','🙂','A little sweat is fine'],['challenge','🔥','Challenge me']],
+  piece:v=>['intensity',{gentle:'Gentle',sweat:'Moderate',challenge:'Strong'}[v]],
+  react:{gentle:'Gentle wins after 40. Good call.',sweat:'Nice balance.',challenge:"Love the energy. We'll build up to it."}, p:4});
+add({id:'time', phase:1, type:'slider', q:'How much time can you give yourself each day?', min:5, max:30, step:5, val:15, unit:'min',
+  emojis:[[5,'😮‍💨'],[10,'🙂'],[15,'😊'],[20,'💪'],[25,'🔥'],[30,'🚀']],
+  cap:v=> v<10?'Tiny but mighty.': v<=20?'The sweet spot for busy women.':'Ambitious! We can do that.',
+  piece:v=>['time',`${v} min/day`], react:v=>`${v} minutes. That fits even your busiest day.`, p:5});
+add({id:'gentle_info', phase:1, type:'info', render:()=>({
+  art: anim({pose:'stand'},{pose:'overhead'},WOMEN['50-54']),
+  title:`You don't need <span class="hl">brutal workouts</span>.`,
+  body:`<p>After 40, too much high-intensity exercise can push up stress hormones, and stress loves to park itself around the belly.</p><p><b>Gentle, steady, every day</b> beats hard and occasional.</p>`,
+  tip:`That's exactly how the Stick Challenge works.`
+})});
+add({id:'joints', phase:1, type:'multi', max:2, none:'none', q:'Does anything bother you?', sub:"We'll adapt every move.",
+  opts:[['knees','🦵','My knees'],['back','🔙','My lower back'],['shoulders','💆‍♀️','My shoulders'],['hips','🦴','My hips'],['none','✅',"I'm good"]],
+  piece:v=>['joints', v.includes('none')?'Full range':({knees:'Knee-safe',back:'Back-safe',shoulders:'Shoulder-safe',hips:'Hip-safe'}[v[0]])],
+  react:v=> v.includes('none')?'Great, full range of motion it is.':'Noted. Every move gets a gentler version.', p:3});
+add({id:'joints_info', phase:1, type:'info', skipIf:()=> (A.joints||[]).includes('none'), render:()=>{
+  const j=(A.joints||[])[0];
+  const name={knees:'knees',back:'lower back',shoulders:'shoulders',hips:'hips'}[j]||'joints';
+  return {art: anim({pose:'overhead'},{pose:'squat'},WOMEN['55+']),
+    title:`We've got your <span class="hl">${name}</span>. 🤍`,
+    body:`<p>The stick works like a built-in guide. It keeps your back straight and your body aligned, so the moves stay gentle on your ${name}.</p><p>No jumping. No floor burpees. Every move has an easier version.</p>`,
+    tip:`Stronger muscles around your ${name} usually means less strain in daily life.`};
+}});
+add({id:'place', phase:1, type:'single', q:'Where will you do it?',
+  opts:[['living','🛋️','Living room'],['bedroom','🛏️','Bedroom'],['anywhere','🌎','Anywhere I can']],
+  piece:v=>['place',{living:'Living room',bedroom:'Bedroom',anywhere:'Anywhere'}[v]],
+  react:'No gym, no commute, no one watching. 😌', p:3});
+add({id:'stick', phase:1, type:'single', q:'Do you have a stick at home?', sub:'A broom handle is perfect. Just the handle.',
+  opts:[['broom','🧹','A broom handle'],['pvc','🪈','A PVC pipe'],['dowel','🪵','A wooden dowel'],['get','🛒',"I'll grab one today"]],
+  react:{broom:"That's your whole gym. 🙌",pvc:"Perfect. Light and easy.",dowel:'Perfect.',get:'Easy. Any straight handle, about 4 to 5 feet, works.'}, p:4});
+add({id:'moves', phase:1, type:'swipe', p:4});
+add({id:'halfway', phase:1, type:'halfway'});
+add({id:'challenge', phase:1, type:'challenge'});
+add({id:'lvl2', phase:1, type:'level', medal:'🦵', badge:'Program Built', pct:45});
+
+/* ---------- PHASE 2 · BLOCKERS ---------- */
+add({id:'energy', phase:2, type:'slider', q:"How's your energy during the day?", min:1, max:5, step:1, val:3, unit:'',
+  emojis:[[1,'🦥'],[2,'😴'],[3,'😐'],[4,'🙂'],[5,'⚡']],
+  labels:{1:'Running on empty',2:'Low most days',3:'Up and down',4:'Pretty good',5:'Full of energy'},
+  cap:v=>({1:'Running on empty',2:'Low most days',3:'Up and down',4:'Pretty good',5:'Full of energy'}[v]),
+  react:v=> v<=2?"Then energy is the first thing we'll bring back.": v==3?'Up and down is so normal right now. We can steady it.':'Great. Let’s keep it that way.', p:3});
+add({id:'sleep', phase:2, type:'multi', max:2, none:'fine', q:'Anything about your sleep?', sub:'Pick up to 2',
+  opts:[['falling','🌀','Trouble falling asleep'],['tired','🥱','I wake up tired'],['night','🌙','I wake up at night'],['hot','🔥','Hot flashes or night sweats'],['fine','😴','I sleep fine']],
+  piece:v=>['sleep', v.includes('fine')?'Restful':'Sleep reset'],
+  react:v=> v.includes('hot')?'Night sweats? Your plan gets an evening wind-down.': v.includes('fine')?'Lucky you. That helps a lot.':'Poor sleep makes the belly stubborn. We’ll fix that.', p:3});
+add({id:'habits', phase:2, type:'multi', max:2, none:'none', q:'Any of these sound like you?', sub:'No judgment. Pick up to 2',
+  opts:[['wine','🍷','A glass of wine at night'],['snack','🌙','Late-night snacking'],['sweet','🍫','A real sweet tooth'],['screen','📱','Eating in front of a screen'],['none','🙅‍♀️','None of these']],
+  react:'No judgment. Just data for your plan.', p:2});
+add({id:'tried', phase:2, type:'multi', max:3, none:'nothing', q:'What have you already tried?', sub:'Pick all that apply (up to 3)',
+  opts:[['pills','💊','Diet pills or supplements'],['counting','🔢','Counting calories or points'],['keto','🥩','Keto or low-carb'],['gym','🏋️‍♀️','A gym membership'],['shots','💉','Weight-loss shots'],['nothing','🌱','Nothing yet']],
+  react:v=> v.includes('nothing')?'Then you start fresh. Love that.':'And none of them were built for a body after 40.', p:5});
+add({id:'obstacle', phase:2, type:'single', q:'What usually gets in the way?',
+  opts:[['regain','🔁','I lose it, then gain it back'],['plan','🗺️',"I never have a real plan"],['hard','😩','It gets too hard'],['time','⏰','No time'],['bored','🥱','I get bored']],
+  react:{regain:"That's why we build a habit, not a sprint.",plan:'You’re building one right now. 😉',hard:'Then gentle is your secret weapon.',time:'15 minutes fits. Promise.',bored:'Short, fun moves. Different every week.'}, p:3});
+add({id:'load1', phase:2, type:'loading', title:'Finding your blockers...', checks:['Mapping your hormone phase','Checking your sleep','Reading your daily habits','Comparing what you’ve tried'], ms:4200});
+add({id:'diagnosis', phase:2, type:'diagnosis'});
+
+/* ---------- PHASE 3 · SAFETY ---------- */
+add({id:'health', phase:3, type:'multi', max:3, none:'none', q:'Do any of these apply to you?', sub:'For your safety only.',
+  opts:[['heart','❤️','A heart condition'],['bp','🩺','High blood pressure'],['diabetes','🩸','Diabetes'],['surgery','🏥','Recent surgery or injury'],['pregnant','🤰','Pregnant'],['none','✅','None of these']],
+  react:v=> v.includes('none')?'All clear. 👍':'Please check with your doctor before starting. Every move has a gentler version.', p:4});
+add({id:'reason', phase:3, type:'multi', max:2, q:'What made you gain weight in the last few years?', sub:'Pick up to 2',
+  opts:[['busy','🏃‍♀️','A busy life'],['stress','😣','Stress'],['metab','🐢','Slower metabolism with age'],['meno','🌙','Menopause'],['kids','👶','Kids and family'],['injury','🩹','An injury']],
+  react:"That's not on you. Now we fix it.", p:4});
+add({id:'lvl4', phase:3, type:'level', medal:'🛡️', badge:'Safety Check Passed', pct:85, piece:['safety','Checked']});
+
+/* ---------- PHASE 4 · PLAN ---------- */
+add({id:'quit_info', phase:4, type:'info', render:()=>({
+  art: anim({pose:'stand'},{pose:'overhead'},WOMEN['40-44']),
+  title:`Why do most women quit?<br><span class="hl">They start too hard.</span>`,
+  body:`<p>Day 1 feels great. Day 4 hurts. Day 7 you're done.</p><p>Your plan starts gentle and grows with you, so by day 28 it's just part of your day.</p>`,
+  tip:`Small and steady is how habits stick.`
+})});
+add({id:'pace', phase:4, type:'single', q:'How do you want to get there?',
+  opts:[['steady','🐢','Steady and lasting'],['mid','🚶‍♀️','Somewhere in between'],['fast','🏃‍♀️','As fast as I safely can']],
+  react:'Got it. Your weekly pace is set.', p:3});
+add({id:'commit', phase:4, type:'single', q:'Can you give yourself 15 minutes a day for the next 28 days?',
+  opts:[['yes','💪',"Yes, I'm in!"],['try','🙂',"I'll do my best"]],
+  react:{yes:"That's the spirit! 🎉",try:"That's all it takes."}, pf:v=>v==='yes'?4:2});
+add({id:'load2', phase:4, type:'loading', title:'Building your 28-day plan...', checks:['Picking your Week 1 moves','Adjusting for your joints','Setting your daily time','Adding your sleep wind-down'], ms:5000, rotate:true});
+add({id:'email', phase:4, type:'email'});
+add({id:'name', phase:4, type:'name'});
+add({id:'scorereveal', phase:4, type:'scorereveal'});
+add({id:'future', phase:4, type:'future'});
+add({id:'calendar', phase:4, type:'calendar'});
+add({id:'scratch', phase:4, type:'scratch'});
+add({id:'offer', phase:4, type:'offer'});
+
+/* ================= NAV ================= */
+function next(){ hist.push(idx); idx++; while(S[idx] && S[idx].skipIf && S[idx].skipIf()) idx++; render(); }
+function back(){ if(!hist.length) return; idx=hist.pop(); render(); }
+$('#back').onclick=back;
+function advanceAfter(msg, ms=900){ if(msg) toast(msg, ms+300); setTimeout(next, msg?ms:350); }
+
+function renderChrome(sc){
+  const isCover = sc.type==='cover', isOffer = sc.type==='offer';
+  $('#hdr').hidden = isCover;
+  $('#plan').hidden = isCover || isOffer || ['scorereveal','future','calendar','scratch'].includes(sc.type);
+  $('#back').style.visibility = (isCover||!hist.length)?'hidden':'visible';
+  const phIdx = sc.phase;
+  const inPhase = S.filter(s=>s.phase===phIdx), pos = inPhase.indexOf(sc);
+  $('#phases').innerHTML = PHASES.map((n,i)=>{
+    const w = i<phIdx?100: i>phIdx?0: Math.round((pos+1)/inPhase.length*100);
+    return `<div class="ph ${i===phIdx?'on':''}"><div class="ph-bar"><i style="width:${w}%"></i></div><div class="ph-lbl">${n}</div></div>`;
+  }).join('');
+  renderPlan(); renderScore();
+}
+
+function render(){
+  const sc=S[idx]; if(!sc) return;
+  window.scrollTo(0,0);
+  renderChrome(sc);
+  track('quiz_step',{step:idx+1,screen:sc.id});
+  const fn = R[sc.type]; main.innerHTML=''; cta(null); fn(sc);
+}
+
+/* ================= RENDERERS ================= */
+const R = {};
+
+R.cover = sc => {
+  main.innerHTML = `<div class="scr cover">
+    <div class="badges"><span class="badge">For women 40+</span><span class="badge">No gym</span><span class="badge">15 min a day</span></div>
+    <h1>The 28-Day <span class="hl">Stick Challenge</span></h1>
+    <p class="sub">Build your personal plan in 2 minutes.<br><b>Tap your age to start.</b></p>
+    <div class="grid2">${Object.keys(WOMEN).map(k=>`
+      <button class="card-img" data-v="${k}"><div class="art">${anim({pose:'stand'},{pose:'overhead'},WOMEN[k])}</div><div class="lbl">Age ${k} <span>›</span></div></button>`).join('')}
+    </div>
+    <p class="foot-note">One broom handle. Your living room. One payment.</p>
+  </div>`;
+  main.querySelectorAll('.card-img').forEach(b=>b.onclick=()=>{
+    A.age=b.dataset.v; b.classList.add('sel'); setPts('age',4); track('quiz_start',{age:A.age}); setTimeout(next,250);
+  });
+};
+
+function optBtn([v,ic,lb],multi){ return `<button class="opt" data-v="${v}"><span class="ic">${ic}</span><span>${lb}</span>${multi?'<span class="ck">✓</span>':''}</button>`; }
+function head(sc){ return `<h2>${sc.q}</h2>${sc.sub?`<p class="sub">${sc.sub}</p>`:''}`; }
+function reactFor(sc,v){ const r=sc.react; if(!r) return ''; if(typeof r==='function') return r(v); if(typeof r==='object') return r[v]||''; return r; }
+function applyPiece(sc,v){ if(sc.piece){ const [slot,label]=sc.piece(v); setPiece(slot,label); } }
+
+R.single = sc => {
+  main.innerHTML = `<div class="scr">${head(sc)}<div class="opts">${sc.opts.map(o=>optBtn(o)).join('')}</div></div>`;
+  main.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+    main.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel')); b.classList.add('sel');
+    const v=b.dataset.v; A[sc.id]=v; applyPiece(sc,v); setPts(sc.id, sc.pf?sc.pf(v):(sc.p||0));
+    main.querySelectorAll('.opt').forEach(x=>x.onclick=null);
+    advanceAfter(reactFor(sc,v));
+  });
+};
+
+R.multi = sc => {
+  main.innerHTML = `<div class="scr">${head(sc)}<div class="opts">${sc.opts.map(o=>optBtn(o,true)).join('')}</div></div>`;
+  const sel = new Set(A[sc.id]||[]);
+  const sync=()=>{ main.querySelectorAll('.opt').forEach(b=>b.classList.toggle('sel',sel.has(b.dataset.v))); cta('Continue', sel.size>0, done); };
+  main.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+    const v=b.dataset.v;
+    if(sel.has(v)) sel.delete(v);
+    else {
+      if(sc.none && v===sc.none) sel.clear();
+      else if(sc.none) sel.delete(sc.none);
+      if(sel.size>=sc.max) { const first=[...sel][0]; sel.delete(first); }
+      sel.add(v);
+    }
+    sync();
+  });
+  function done(){ const v=[...sel]; A[sc.id]=v; applyPiece(sc,v); setPts(sc.id,sc.p||0); cta(null); advanceAfter(reactFor(sc,v)); }
+  sync();
+};
+
+R.img = sc => {
+  main.innerHTML = `<div class="scr">${head(sc)}<div class="grid2">${sc.opts.map(([v,lb,o])=>`
+    <button class="card-img ${sc.light?'light':''}" data-v="${v}"><div class="art">${fig(Object.assign({},WOMEN[A.age||'45-49'],{stick:false,pose:'down'},o))}</div><div class="lbl">${lb}</div></button>`).join('')}</div></div>`;
+  main.querySelectorAll('.card-img').forEach(b=>b.onclick=()=>{
+    b.classList.add('sel'); const v=b.dataset.v; A[sc.id]=v; setPts(sc.id,sc.p||0);
+    main.querySelectorAll('.card-img').forEach(x=>x.onclick=null);
+    advanceAfter(reactFor(sc,v));
+  });
+};
+
+R.bodymap = sc => {
+  const zones=[['belly','Belly',50,47,74,58],['arms','Arms',14,26,62,50],['arms','Arms',73,26,62,50],['hips','Hips & thighs',50,70,80,64]];
+  main.innerHTML = `<div class="scr">${head(sc)}
+    <div class="bodymap">${fig(Object.assign({},WOMEN[A.age||'45-49'],{pose:'down',stick:false,w:1.15,belly:1}))}
+      ${zones.map(([v,lb,x,y,w,h])=>`<button class="zone" data-v="${v}" style="left:calc(${x}% - ${w/2}px);top:calc(${y}% - ${h/2}px);width:${w}px;height:${h}px">${lb}</button>`).join('')}
+    </div>
+    <div class="opts" style="margin-top:14px">${optBtn(['full','✨','My whole body'])}</div></div>`;
+  const pick=v=>{
+    main.querySelectorAll('[data-v]').forEach(x=>x.classList.toggle('sel',x.dataset.v===v));
+    A.zone=v; setPts('zone',sc.p);
+    setPiece('zone',{belly:'Belly first',arms:'Arms first',hips:'Hips & thighs',full:'Full body'}[v]);
+    main.querySelectorAll('[data-v]').forEach(x=>x.onclick=null);
+    advanceAfter({belly:"Belly it is. We'll start there. 🎯",arms:'Arms it is. Toned and strong. 💪',hips:'Hips and thighs. Got it. 🍑',full:'Head to toe. Love it. ✨'}[v]);
+  };
+  main.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>pick(b.dataset.v));
+};
+
+R.info = sc => {
+  const c = sc.render();
+  main.innerHTML = `<div class="scr info"><div class="info-art">${c.art}</div><h2>${c.title}</h2>${c.body}${c.tip?`<div class="tip">💡 ${c.tip}</div>`:''}</div>`;
+  cta('Got it');
+};
+
+R.statements = sc => {
+  let i=0; A.statements={};
+  const draw=()=>{
+    if(i>=sc.items.length){ setPts(sc.id,sc.p); next(); return; }
+    const [k,t,o]=sc.items[i];
+    main.innerHTML = `<div class="scr"><h2>Does this sound like you?</h2><p class="sub">Swipe or tap. ${i+1} of ${sc.items.length}</p>
+      <div class="stack"><div class="sw" id="card"><div class="stamp y">YES</div><div class="stamp n">NOPE</div>
+        <div class="art">${fig(Object.assign({},WOMEN[A.age||'45-49'],o,{stick:false}))}</div><div class="t">“${t}”</div></div></div>
+      <div class="sw-btns"><button class="sw-btn" data-a="no">✕</button><button class="sw-btn y" data-a="yes">✓</button></div>
+      <div class="sw-btn-lbl"><span>Not me</span><span>That's me</span></div></div>`;
+    const go=a=>{ A.statements[k]=a; const card=$('#card'); card.style.transform=`translateX(${a==='yes'?400:-400}px) rotate(${a==='yes'?18:-18}deg)`; card.style.opacity=0;
+      toast(a==='yes'?['You are so not alone.','That ends with this plan.','That’s exactly what your plan solves.'][i]:'Good to know!',900); i++; setTimeout(draw,520); };
+    main.querySelectorAll('.sw-btn').forEach(b=>b.onclick=()=>go(b.dataset.a));
+    swipeable($('#card'),go);
+  };
+  draw();
+};
+
+function swipeable(el,cb){
+  let x0=null,dx=0;
+  el.addEventListener('pointerdown',e=>{x0=e.clientX;el.style.transition='none';el.setPointerCapture(e.pointerId);});
+  el.addEventListener('pointermove',e=>{ if(x0===null) return; dx=e.clientX-x0; el.style.transform=`translateX(${dx}px) rotate(${dx/18}deg)`;
+    el.querySelector('.stamp.y').style.opacity=Math.max(0,dx/90); el.querySelector('.stamp.n').style.opacity=Math.max(0,-dx/90); });
+  const end=()=>{ if(x0===null) return; el.style.transition=''; x0=null;
+    if(dx>80) cb('yes'); else if(dx<-80) cb('no'); else { el.style.transform=''; el.querySelectorAll('.stamp').forEach(s=>s.style.opacity=0); } dx=0; };
+  el.addEventListener('pointerup',end); el.addEventListener('pointercancel',end);
+}
+
+R.level = sc => {
+  if(sc.piece) setPiece(sc.piece[0],sc.piece[1]);
+  const filled = SLOTS.filter(s=>plan[s[0]]).length;
+  main.innerHTML = `<div class="scr lvl">
+    <div class="kicker">Level ${sc.phase+1} complete</div>
+    <div class="medal">${sc.medal}</div>
+    <h1>${sc.badge}!</h1>
+    <div class="big-score"><div class="n" id="cnt">${score}</div><div class="l"><b>Stick Score</b><br>How well this plan fits you</div></div>
+    <p class="progress-note">Your plan is <span class="hl">${sc.pct}% built</span> · ${filled} of 8 pieces in place</p>
+  </div>`;
+  confetti(); track('level_up',{level:sc.phase+1});
+  cta('Keep going →', true, next, true);
+};
+
+R.slider = sc => {
+  const v0 = A[sc.id]||sc.val;
+  const emo = v => { let e=sc.emojis[0][1]; sc.emojis.forEach(([k,x])=>{ if(v>=k) e=x; }); return e; };
+  main.innerHTML = `<div class="scr">${head(sc)}<div class="slider-wrap">
+    <div class="slider-emoji" id="se">${emo(v0)}</div>
+    <div class="slider-val" id="sv">${sc.unit?v0+' '+sc.unit:''}</div>
+    <div class="slider-cap" id="sc">${sc.cap(v0)}</div>
+    <input type="range" id="rg" min="${sc.min}" max="${sc.max}" step="${sc.step}" value="${v0}">
+    <div class="range-lbls"><span>${sc.unit?sc.min+' '+sc.unit:'Low'}</span><span>${sc.unit?sc.max+' '+sc.unit:'High'}</span></div>
+  </div></div>`;
+  const rg=$('#rg');
+  rg.oninput=()=>{ const v=+rg.value; $('#se').textContent=emo(v); $('#se').style.transform='scale(1.15)'; setTimeout(()=>$('#se').style.transform='',150);
+    if(sc.unit) $('#sv').textContent=v+' '+sc.unit; $('#sc').textContent=sc.cap(v); };
+  cta('Continue', true, ()=>{ const v=+rg.value; A[sc.id]=v; applyPiece(sc,v); setPts(sc.id,sc.p); cta(null); advanceAfter(reactFor(sc,v)); });
+};
+
+R.swipe = sc => {
+  const keys=Object.keys(MOVES); let i=0; A.moves=[];
+  const draw=()=>{
+    if(i>=keys.length){ setPts(sc.id,A.moves.length); next(); return; }
+    const m=MOVES[keys[i]];
+    main.innerHTML = `<div class="scr"><h2>Pick your Week 1 moves</h2><p class="sub">Swipe right if you like it. ${i+1} of ${keys.length}</p>
+      <div class="stack"><div class="sw" id="card"><div class="stamp y">LOVE IT</div><div class="stamp n">SKIP</div>
+        <div class="art">${anim(m.a,m.b,WOMEN[A.age||'45-49'])}</div><div class="t">${m.name}</div><div class="s">${m.desc}</div></div></div>
+      <div class="sw-btns"><button class="sw-btn" data-a="no">✕</button><button class="sw-btn y" data-a="yes">❤</button></div>
+      <div class="sw-count">Week 1: ${A.moves.length} move${A.moves.length===1?'':'s'} added</div></div>`;
+    const go=a=>{ if(a==='yes') A.moves.push(keys[i]); const card=$('#card'); card.style.transform=`translateX(${a==='yes'?400:-400}px) rotate(${a==='yes'?18:-18}deg)`; card.style.opacity=0;
+      toast(a==='yes'?'Added to your Week 1 ❤':'Skipped. We’ll swap it.',800); i++; setTimeout(draw,520); };
+    main.querySelectorAll('.sw-btn').forEach(b=>b.onclick=()=>go(b.dataset.a));
+    swipeable($('#card'),go);
+  };
+  draw();
+};
+
+R.halfway = sc => {
+  const filled = SLOTS.filter(s=>plan[s[0]]).length;
+  main.innerHTML = `<div class="scr lvl"><div class="kicker">Halfway there</div><div class="medal" style="background:radial-gradient(circle at 35% 30%,#FFD3E0,#F27BA4);box-shadow:0 0 0 10px #FFE4EC,0 14px 30px rgba(242,123,164,.4)">🏁</div>
+    <h1>Your plan is <span class="hl">50% built</span></h1>
+    <p class="sub">${filled} of 8 pieces in place. Week 1 already has <b>${(A.moves||[]).length||'your'} move${(A.moves||[]).length===1?'':'s'}</b>.</p>
+    <div class="tip" style="text-align:left">⏱ Next up: a 10-second test you can do right now, from your couch.</div></div>`;
+  cta("Let's do it →", true, next, true);
+};
+
+R.challenge = sc => {
+  const W = WOMEN[A.age||'45-49'];
+  main.innerHTML = `<div class="scr" style="text-align:center"><h2>Try it right now ⏱</h2>
+    <p class="sub">Grab your stick (or a towel). Hold it overhead and <b>squeeze</b> for 10 seconds.</p>
+    <div class="timer"><svg class="ring" width="210" height="210" viewBox="0 0 210 210"><circle cx="105" cy="105" r="96" fill="none" stroke="#FFE4EC" stroke-width="12"/><circle id="tr" cx="105" cy="105" r="96" fill="none" stroke="#E0558A" stroke-width="12" stroke-linecap="round" stroke-dasharray="603.2" stroke-dashoffset="603.2"/></svg>
+      <div class="fig" id="cf">${fig(Object.assign({},W,{pose:'overhead'}))}</div><div class="num" id="tn">10</div></div>
+    <div id="cmsg" class="sub" style="margin-top:12px">Ready when you are.</div></div>`;
+  let running=false;
+  const start=()=>{
+    if(running) return; running=true; cta('Hold it... 💪', false); track('mini_challenge_start');
+    $('#cf').classList.add('hold-shake'); let t=10; const tr=$('#tr');
+    const msgs={8:'Squeeze the stick a little harder...',6:'Feel your arms and belly? Keep going.',4:'Breathe. Shoulders down.',2:'Almost there!'};
+    const iv=setInterval(()=>{ if(!$('#tn')){clearInterval(iv);return;} t--; $('#tn').textContent=t; tr.style.transition='stroke-dashoffset 1s linear'; tr.style.strokeDashoffset=603.2*(t/10);
+      if(msgs[t]) $('#cmsg').textContent=msgs[t];
+      if(t<=0){ clearInterval(iv); $('#cf').classList.remove('hold-shake'); $('#tn').textContent='✓';
+        main.querySelector('.scr').insertAdjacentHTML('beforeend',`<div class="opts" id="cres"><div class="tip" style="text-align:left">🔥 <b>That's GRIP</b>, the first G of the 3G Method. Squeezing the stick keeps your arms and core working the whole time.</div>${optBtn(['felt','🔥','I felt it!'])}${optBtn(['notsure','🤔','Not sure yet'])}</div>`);
+        $('#cmsg').textContent='Done!'; cta(null);
+        main.querySelectorAll('#cres .opt').forEach(b=>b.onclick=()=>{ A.challenge=b.dataset.v; setPts('challenge',7); track('mini_challenge_done'); advanceAfter(b.dataset.v==='felt'?'🏅 Badge unlocked: First Rep Done':'It gets clearer with every rep. 🏅 First Rep Done'); });
+      }
+    },1000);
+  };
+  cta('Start the 10 seconds', true, start, true);
+  main.querySelector('.scr').insertAdjacentHTML('beforeend',`<button class="sub" id="skipc" style="text-decoration:underline;margin-top:6px">Skip for now</button>`);
+  $('#skipc').onclick=()=>{ A.challenge='skip'; setPts('challenge',0); track('mini_challenge_skip'); next(); };
+};
+
+R.loading = sc => {
+  main.innerHTML = `<div class="scr" style="text-align:center"><h2>${sc.title}</h2>
+    <div class="load-ring"><svg width="150" height="150" viewBox="0 0 150 150"><circle cx="75" cy="75" r="64" fill="none" stroke="#FFE4EC" stroke-width="12"/><circle id="lr" cx="75" cy="75" r="64" fill="none" stroke="#E0558A" stroke-width="12" stroke-linecap="round" stroke-dasharray="402.1" stroke-dashoffset="402.1"/></svg><b id="lp">0%</b></div>
+    <ul class="checks" style="text-align:left">${sc.checks.map(c=>`<li><span class="d">✓</span>${c}</li>`).join('')}</ul>
+    ${sc.rotate?`<div class="rot" id="rot"></div>`:''}</div>`;
+  const facts=['🧹 One stick, 15 minutes. No gym, no machines, no jumping.','🦵 Every move comes with a gentler version for knees and back.','💳 One payment. No app to download. No subscription.','📅 A new set of moves every week, so you never get bored.'];
+  let fi=0; const rot=$('#rot'); if(rot){ rot.textContent=facts[0]; }
+  const rIv = rot? setInterval(()=>{ fi=(fi+1)%facts.length; if(!document.body.contains(rot)){clearInterval(rIv);return;} rot.style.opacity=0; setTimeout(()=>{rot.textContent=facts[fi]; rot.style.opacity=1;},250); },1300):null;
+  const t0=performance.now(); const lis=main.querySelectorAll('.checks li');
+  const step=now=>{ if(!$('#lp')) return; const p=Math.min(1,(now-t0)/sc.ms); $('#lp').textContent=Math.round(p*100)+'%'; $('#lr').style.strokeDashoffset=402.1*(1-p);
+    lis.forEach((li,k)=>{ if(p>=(k+1)/lis.length-0.02) li.classList.add('done'); });
+    if(p<1) requestAnimationFrame(step); else { if(rIv) clearInterval(rIv); setTimeout(next,500); } };
+  requestAnimationFrame(step);
+};
+
+function blockers(){
+  const h={regular:10,unsure:22,peri:36,meno:40,post:32}[A.hormone]||20;
+  const sl=(A.sleep||[]).filter(x=>x!=='fine');
+  const sleep=6+sl.length*12+(sl.includes('hot')?8:0);
+  const hab=(A.habits||[]).filter(x=>x!=='none').length;
+  const stress=8+({1:14,2:10,3:6,4:2,5:0}[A.energy]||6)+hab*5;
+  const tr=(A.tried||[]).filter(x=>x!=='nothing').length;
+  const aon=6+tr*6+(['hard','regain','bored'].includes(A.obstacle)?10:0)+((A.statements||{}).quit==='yes'?8:0);
+  const raw=[['Hormone shift',h,'hormone'],['Poor sleep',sleep,'sleep'],['Stress & cortisol',stress,'stress'],['All-or-nothing workouts',aon,'aon']];
+  const tot=raw.reduce((a,b)=>a+b[1],0);
+  let out=raw.map(([n,v,k])=>[n,Math.round(v/tot*100),k]).sort((a,b)=>b[1]-a[1]);
+  const diff=100-out.reduce((a,b)=>a+b[1],0); out[0][1]+=diff; return out;
+}
+const BLOCK_TXT={
+  hormone:`After 40, shifting estrogen tells your body to store fat around the belly. <b>This isn't a discipline problem. It's biology.</b> Your plan uses gentle strength work, which helps your muscles stay active while your hormones change.`,
+  sleep:`When you sleep badly, the hormones that control hunger get scrambled, and cravings take over. <b>That's not weak willpower. It's tiredness.</b> Your plan adds a 5-minute evening wind-down with the stick.`,
+  stress:`Long days and low energy keep stress hormones high, and stress loves to settle around the belly. <b>You don't need more pressure.</b> Your plan keeps every session short, gentle and calming.`,
+  aon:`You've tried hard things that didn't last. Not because you failed, but because <b>they were built to be quit.</b> Your plan starts small and grows with you, so it actually sticks.`
+};
+R.diagnosis = sc => {
+  const b=blockers(); A.blockers=b.map(x=>x[2]);
+  main.innerHTML = `<div class="scr"><div class="kicker" style="font-size:12px;font-weight:900;color:var(--pink-d);letter-spacing:.08em;text-transform:uppercase">Level 3 complete · Blockers revealed</div>
+    <h1>Your Midlife Weight Blockers</h1><p class="sub">Based on your answers, here's what's been holding your body back.</p>
+    <div class="box"><div class="bars">${b.map(([n,v])=>`<div class="bar-row"><div class="top"><span>${n}</span><span>${v}%</span></div><div class="track"><i data-w="${v}"></i></div></div>`).join('')}</div></div>
+    <div class="explain">🔍 <b>Your #1 blocker: ${b[0][0]}</b><br>${BLOCK_TXT[b[0][2]]}</div></div>`;
+  setTimeout(()=>main.querySelectorAll('.track i').forEach(i=>i.style.width=i.dataset.w+'%'),120);
+  confetti(); track('level_up',{level:3});
+  cta('Keep going →', true, next, true);
+};
+
+R.email = sc => {
+  main.innerHTML = `<div class="scr"><h2>Your plan is ready! 🎉</h2>
+    <div class="gift"><div class="g">🎁</div><div><b>You unlocked a free gift:</b><br>the 3-Move Starter Routine. Where should we send it?</div></div>
+    <input class="field" id="em" type="email" inputmode="email" autocomplete="email" placeholder="Your best email" value="${esc(A.email||'')}">
+    <div class="err" id="ee"></div>
+    <p class="small">🔒 We respect your privacy. No spam, unsubscribe anytime. By continuing you agree to receive emails about your plan.</p></div>`;
+  const em=$('#em'); const ok=v=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim());
+  const upd=()=>cta('Send my gift & show my plan', ok(em.value), submit); em.oninput=()=>{$('#ee').textContent='';upd();}; upd();
+  function submit(){ if(!ok(em.value)){ $('#ee').textContent='Please check your email.'; return; }
+    A.email=em.value.trim(); try{localStorage.setItem('sc_lead',JSON.stringify({email:A.email,t:Date.now()}));}catch(e){}
+    if(CONFIG.LEAD_WEBHOOK){ try{ fetch(CONFIG.LEAD_WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:A.email,answers:A,score,utm:UTM})}); }catch(e){} }
+    track('Lead'); cta(null); advanceAfter('🎁 On its way! Check your inbox.',900); }
+};
+
+R.name = sc => {
+  main.innerHTML = `<div class="scr"><h2>What should we call you?</h2><p class="sub">We'll put your name on your plan.</p>
+    <input class="field" id="nm" type="text" autocomplete="given-name" placeholder="First name" maxlength="24" value="${esc(A.name||'')}"></div>`;
+  const nm=$('#nm'); const upd=()=>cta('Show my plan', nm.value.trim().length>=2, ()=>{ A.name=nm.value.trim().replace(/^./,c=>c.toUpperCase()); renderPlan(); cta(null); advanceAfter(`Nice to meet you, ${A.name}! 💗`,800); });
+  nm.oninput=upd; upd(); setTimeout(()=>nm.focus(),300);
+};
+
+R.scorereveal = sc => {
+  const s=score;
+  const lab = s>=85?'Excellent fit':s>=70?'Great fit':'Good fit';
+  const parts=[['⏱ Time',!!plan.time],['🦵 Joints',!!plan.joints],['🌙 Hormones',!!plan.hormone],['💪 Motivation',A.commit==='yes'||A.commit==='try']];
+  main.innerHTML = `<div class="scr" style="text-align:center"><h2>${esc(nameOr('Your'))}${A.name?', your':''} Stick Score</h2>
+    <div class="score-big"><svg width="220" height="220" viewBox="0 0 220 220"><circle cx="110" cy="110" r="96" fill="none" stroke="#FFE4EC" stroke-width="16"/><circle id="sr" cx="110" cy="110" r="96" fill="none" stroke="#E0558A" stroke-width="16" stroke-linecap="round" stroke-dasharray="603.2" stroke-dashoffset="603.2" style="transition:stroke-dashoffset 1.6s ease"/></svg>
+      <div class="c"><b id="sn">0</b><span>out of 100</span></div></div>
+    <span class="fit-tag">${lab}</span>
+    <div class="breakdown">${parts.map(([l,o])=>`<div>${l} ${o?'✅':'➖'}</div>`).join('')}</div>
+    <p class="sub" style="margin-top:16px">This is how well the Stick Challenge fits your body, schedule and goals.<br><b>The last ${100-s} points come from doing it.</b></p></div>`;
+  setTimeout(()=>{ if(!$('#sr')) return; $('#sr').style.strokeDashoffset=603.2*(1-s/100); let n=0; const iv=setInterval(()=>{ const el=$('#sn'); if(!el){clearInterval(iv);return;} n+=2; if(n>=s){n=s;clearInterval(iv);} el.textContent=n; },30); },150);
+  track('score_view'); cta('See my next 28 days →', true, next);
+};
+
+R.future = sc => {
+  const W=WOMEN[A.age||'45-49'];
+  const m=(n,on)=>`<div class="meter">${[1,2,3,4,5].map(i=>`<i class="${i<=on?'on':''}"></i>`).join('')}</div>`;
+  const rows=[['Energy',2,4],['Strength',1,4],['Flexibility',2,4],['Confidence',2,5]];
+  main.innerHTML = `<div class="scr"><h2>Meet your future self. <span class="hl">Confident</span> in your own body.</h2>
+    <div class="compare">
+      <div class="col"><div class="art">${fig(Object.assign({},W,{pose:'slump',mood:'flat',stick:false}))}</div><h4>Today</h4>${rows.map(r=>`<div class="mlbl">${r[0]}</div>${m(r[0],r[1])}`).join('')}</div>
+      <div class="col" style="border:2px solid var(--pink)"><div class="art">${anim({pose:'overhead'},{pose:'squat'},W)}</div><h4 class="hl">Day 28</h4>${rows.map(r=>`<div class="mlbl">${r[0]}</div>${m(r[0],r[2])}`).join('')}</div>
+    </div>
+    <div class="tip">🎯 Your goal: <b>${{belly:'a flatter, firmer belly',arms:'toned, strong arms',hips:'firmer hips and thighs',full:'a stronger, firmer body'}[A.zone]||'a stronger body'}</b>, more energy and clothes that fit the way you like. One habit at a time.</div>
+    <p class="small">Illustration only. Results vary from person to person.</p></div>`;
+  cta('Continue', true, next);
+};
+
+R.calendar = sc => {
+  let cells=''; for(let d=1;d<=28;d++) cells+=`<div class="${d===1?'d1':''}" ${d===1?'id="d1"':''}>${d===1?'1':d}</div>`;
+  main.innerHTML = `<div class="scr"><h2>Your 28 days are mapped out 📅</h2><p class="sub">Day 1 is ready. <b>Tap it</b> to see what's inside.</p>
+    <div class="week-lbl"><span>Wk 1 · Wake up</span><span>Wk 2 · Firm up</span><span>Wk 3 · Sculpt</span><span>Wk 4 · Lock it in</span></div>
+    <div class="cal">${cells}</div>
+    <div class="tip">🔥 Do Day 1 today and start your streak.</div></div>`;
+  const open=()=>{
+    const mv=(A.moves&&A.moves.length?A.moves:['reach','squat','twist']).slice(0,4);
+    const d=document.createElement('div'); d.className='modal';
+    d.innerHTML=`<div class="sheet"><h2 style="margin-top:0">Day 1 · ${A.time||15} minutes</h2><p class="sub" style="margin:0">${plan.joints||'Gentle'} · ${plan.intensity||'Gentle'} · ${plan.place||'Living room'}</p>
+      <div class="moves-list">${mv.map(k=>`<div>🧹 ${MOVES[k].name} <span style="margin-left:auto;color:var(--muted);font-size:13px">3 rounds</span></div>`).join('')}<div>🌙 5-min evening wind-down</div></div>
+      <button class="cta" id="cl">Unlock my plan →</button></div>`;
+    document.body.appendChild(d); d.onclick=e=>{ if(e.target===d) d.remove(); }; $('#cl').onclick=()=>{ d.remove(); next(); };
+    track('day1_preview');
+  };
+  $('#d1').onclick=open;
+  cta('Continue', true, next);
+};
+
+R.scratch = sc => {
+  main.innerHTML = `<div class="scr" style="text-align:center"><h2>${esc(nameOr('Hey'))}, one more thing...</h2><p class="sub">Scratch the card to reveal your bonus 🎁</p>
+    <div class="scratch"><div class="prize"><b>Knee & Back Friendly Version</b><span>FREE with your plan today</span></div><canvas id="sc" width="300" height="190"></canvas></div>
+    <p class="small" id="sh">Use your finger.</p></div>`;
+  const cv=$('#sc'), ctx=cv.getContext('2d');
+  const g=ctx.createLinearGradient(0,0,300,190); g.addColorStop(0,'#F27BA4'); g.addColorStop(1,'#E0558A');
+  ctx.fillStyle=g; ctx.fillRect(0,0,300,190);
+  ctx.fillStyle='rgba(255,255,255,.9)'; ctx.font='900 22px Nunito, sans-serif'; ctx.textAlign='center'; ctx.fillText('SCRATCH HERE',150,92); ctx.font='800 14px Nunito, sans-serif'; ctx.fillText('🎁 your bonus is hiding',150,118);
+  ctx.globalCompositeOperation='destination-out';
+  let down=false, revealed=false;
+  const pos=e=>{ const r=cv.getBoundingClientRect(); return [(e.clientX-r.left)*300/r.width,(e.clientY-r.top)*190/r.height]; };
+  const draw=e=>{ const [x,y]=pos(e); ctx.beginPath(); ctx.arc(x,y,22,0,Math.PI*2); ctx.fill(); };
+  const check=()=>{ if(revealed) return; const d=ctx.getImageData(0,0,300,190).data; let c=0; for(let i=3;i<d.length;i+=16) if(d[i]===0) c++; if(c/(d.length/16)>.45) reveal(); };
+  const reveal=()=>{ revealed=true; cv.style.transition='opacity .4s'; cv.style.opacity=0; confetti(); $('#sh').textContent='🎉 Unlocked! It’s added to your plan.'; A.bonus=true; track('scratch_done'); cta('Claim my plan + bonus →', true, next, true); };
+  cv.addEventListener('pointerdown',e=>{down=true;cv.setPointerCapture(e.pointerId);draw(e);});
+  cv.addEventListener('pointermove',e=>{ if(down){draw(e);} });
+  cv.addEventListener('pointerup',()=>{down=false;check();});
+  cta('Reveal it for me', true, reveal);
+};
+
+R.offer = sc => {
+  const nm = A.name?esc(A.name)+"'s":'Your';
+  const b=(A.blockers&&A.blockers.length)?blockers().slice(0,2):[];
+  const q=new URLSearchParams(Object.assign({}, UTM, {score:score, phase:A.hormone||'', joint:(A.joints||[])[0]||'', zone:A.zone||'', email:A.email||'', name:A.name||''}));
+  const url = CONFIG.CHECKOUT_URL + (CONFIG.CHECKOUT_URL.includes('?')?'&':'?') + q.toString();
+  const priceBox = (id)=>`<div class="box price-box"><div class="ribbon">✨ Built for you · Score ${score}/100</div>
+    <div class="price-row"><div class="nm">28-Day Stick Challenge<small>Lifetime access · One payment</small></div><div><div class="price">$${CONFIG.PRICE}</div><div class="per-day">just $${(CONFIG.PRICE/28).toFixed(2)}/day</div></div></div>
+    <ul class="incl"><li>28 follow-along videos, ${A.time||15} min each</li><li>${(A.joints||[]).includes('none')||!(A.joints||[]).length?'Full-range moves with beginner options':'Moves adjusted for your '+({knees:'knees',back:'lower back',shoulders:'shoulders',hips:'hips'}[(A.joints||[])[0]])}</li><li>4 weekly phases: Wake up, Firm up, Sculpt, Lock it in</li><li>Printable 28-day calendar</li><li>No app, no subscription, no equipment</li>${A.bonus?'<li class="bonus">Knee & Back Friendly Version (unlocked, FREE)</li>':''}</ul>
+    <a href="${url}" class="cta pulse" style="display:block;text-align:center;text-decoration:none;margin-top:14px" data-ck="${id}">UNLOCK MY PLAN →</a></div>`;
+  main.innerHTML = `<div class="scr offer">
+    <h1>${nm} 28-day plan is <span class="hl">ready</span> ✅</h1>
+    <div class="plan plan-full" style="margin:12px 0"><div class="plan-h">${nm} Stick Plan<span>8/8 built</span></div><div class="chips">${SLOTS.map(([k,ic,lb])=>`<div class="chip on" style="animation:none">${ic} ${plan[k]||lb}</div>`).join('')}</div></div>
+    ${b.length?`<div class="box"><b>Built to beat your top blockers:</b><div class="bars" style="margin:10px 0 0">${b.map(([n,v])=>`<div class="bar-row"><div class="top"><span>${n}</span><span>${v}%</span></div><div class="track"><i style="width:${v}%"></i></div></div>`).join('')}</div></div>`:''}
+    ${priceBox(1)}
+    <div class="box guar"><div class="seal">28-DAY<br>PROMISE</div><div><b>Try it, risk-free.</b><p style="margin:4px 0 0;font-size:14px;color:var(--muted)">Do the 28 days. If you don't love how you feel, email us within 30 days and we'll refund every cent. No questions, no hoops.</p></div></div>
+    <div class="box"><h3 style="margin:0 0 10px">Why this works when diets didn't</h3><div class="vs">
+      <div class="c bad"><b>What you tried</b><ul><li>Strict diets</li><li>Giving up foods you love</li><li>Workouts too hard to keep</li><li>Gaining it back</li></ul></div>
+      <div class="c good"><b>Stick Challenge ⚡</b><ul><li>15 minutes a day</li><li>Gentle on joints</li><li>Built for hormones after 40</li><li>A habit you keep</li></ul></div></div></div>
+    <div class="box" style="text-align:center"><div style="font-size:15px;font-weight:900;margin-bottom:8px">How the 3G Method works</div>
+      <div style="display:flex;gap:8px;text-align:center;font-size:13px">
+      <div style="flex:1;background:#FFF0F5;border-radius:12px;padding:10px"><b class="hl">GRIP</b><br>Squeeze the stick, arms and core stay on</div>
+      <div style="flex:1;background:#FFF0F5;border-radius:12px;padding:10px"><b class="hl">GUIDE</b><br>The stick keeps you aligned and safe</div>
+      <div style="flex:1;background:#FFF0F5;border-radius:12px;padding:10px"><b class="hl">GLIDE</b><br>Slow, low-impact, no jumping</div></div></div>
+    <div class="faq"><h3>Questions</h3>
+      <details><summary>Do I need a special stick?</summary><p>No. A broom handle (just the handle), a PVC pipe or a wooden dowel, about 4 to 5 feet long, works perfectly.</p></details>
+      <details><summary>I'm not fit or flexible at all.</summary><p>Perfect. Every move has a beginner version, and Week 1 is designed to be gentle.</p></details>
+      <details><summary>What about my knees or back?</summary><p>The stick helps you keep good alignment, and there's no jumping. If you have an injury or a medical condition, check with your doctor before starting.</p></details>
+      <details><summary>Is this a subscription?</summary><p>No. You pay $${CONFIG.PRICE} once and the plan is yours for life. No renewals, no hidden charges.</p></details>
+      <details><summary>How do I get access?</summary><p>Right after checkout, you'll get an email with your access link. Watch on your phone, tablet or TV.</p></details>
+    </div>
+    ${priceBox(2)}
+    <p class="disc">This program is for general fitness and wellness and is not medical advice. Consult your doctor before starting any exercise program. Results vary from person to person.</p>
+  </div>`;
+  main.querySelectorAll('[data-ck]').forEach(a=>a.onclick=()=>track('InitiateCheckout',{value:CONFIG.PRICE,currency:'USD'}));
+  track('ViewContent',{value:CONFIG.PRICE,currency:'USD'});
+  cta('UNLOCK MY PLAN · $'+CONFIG.PRICE, true, ()=>{ track('InitiateCheckout',{value:CONFIG.PRICE,currency:'USD'}); location.href=url; });
+};
+
+/* ================= START ================= */
+render();
+</script>
+</body>
+</html>
