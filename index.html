@@ -272,6 +272,19 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 @keyframes fb{0%{opacity:0}50%{opacity:1}}
 .hold-shake{animation:shake .25s infinite}
 @keyframes shake{0%,100%{transform:translateX(0)}50%{transform:translateX(1.5px)}}
+
+/* Embedded checkout */
+.ckm{position:fixed;inset:0;z-index:90;background:rgba(59,37,49,.55);display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .2s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.ckm-sheet{background:#fff;width:100%;max-width:520px;height:94dvh;border-radius:22px 22px 0 0;display:flex;flex-direction:column;overflow:hidden;animation:up .3s;position:relative}
+@media(min-width:700px){.ckm{align-items:center}.ckm-sheet{height:88vh;border-radius:22px}}
+.ckm-top{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--line);font-weight:900;font-size:14px;color:var(--ink)}
+.ckm-x{width:34px;height:34px;border-radius:50%;background:var(--soft);color:var(--pink-d);font-size:16px;font-weight:900}
+.ckm iframe{flex:1;width:100%;border:0}
+.ckm-load{position:absolute;inset:58px 0 40px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--muted);font-weight:800;background:#fff}
+.ckm-spin{width:36px;height:36px;border-radius:50%;border:4px solid var(--soft);border-top-color:var(--pink-d);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ckm-alt{display:block;text-align:center;font-size:12px;color:var(--muted);padding:10px;text-decoration:underline;font-weight:700}
 </style>
 </head>
 <body>
@@ -1004,7 +1017,7 @@ R.offer = sc => {
   const priceBox = (id)=>`<div class="box price-box"><div class="ribbon">✨ Built for you · Score ${score}/100</div>
     <div class="price-row"><div class="nm">28-Day Stick Challenge<small>Lifetime access · One payment</small></div><div><div class="price">$${CONFIG.PRICE}</div><div class="per-day">just $${(CONFIG.PRICE/28).toFixed(2)}/day</div></div></div>
     <ul class="incl"><li>28 follow-along videos, ${A.time||15} min each</li><li>${(A.joints||[]).includes('none')||!(A.joints||[]).length?'Full-range moves with beginner options':'Moves adjusted for your '+({knees:'knees',back:'lower back',shoulders:'shoulders',hips:'hips'}[(A.joints||[])[0]])}</li><li>4 weekly phases: Wake up, Firm up, Sculpt, Lock it in</li><li>Printable 28-day calendar</li><li>No app, no subscription, no equipment</li>${A.bonus?'<li class="bonus">Knee & Back Friendly Version (unlocked, FREE)</li>':''}</ul>
-    <a href="${url}" onclick="return false;" class="cta pulse hotmart-fb hotmart__button-checkout" style="display:block;text-align:center;text-decoration:none;margin-top:14px;background-image:linear-gradient(90deg,var(--pink),var(--pink-d))" data-ck="${id}">UNLOCK MY PLAN →</a></div>`;
+    <a href="${url}" class="cta pulse" style="display:block;text-align:center;text-decoration:none;margin-top:14px" data-ck="${id}">UNLOCK MY PLAN →</a></div>`;
   main.innerHTML = `<div class="scr offer">
     <h1>${nm} 28-day plan is <span class="hl">ready</span> ✅</h1>
     <div class="plan plan-full" style="margin:12px 0"><div class="plan-h">${nm} Stick Plan<span>8/8 built</span></div><div class="chips">${SLOTS.map(([k,ic,lb])=>`<div class="chip on" style="animation:none">${ic} ${plan[k]||lb}</div>`).join('')}</div></div>
@@ -1029,16 +1042,26 @@ R.offer = sc => {
     ${priceBox(2)}
     <p class="disc">This program is for general fitness and wellness and is not medical advice. Consult your doctor before starting any exercise program. Results vary from person to person.</p>
   </div>`;
-  // Hotmart widget: checkout opens as a pop-up over the quiz (no redirect)
-  if(!window.__hmLoaded){ window.__hmLoaded=true; const sc=document.createElement('script'); sc.src='https://static.hotmart.com/checkout/widget.min.js'; document.head.appendChild(sc);
-    const ln=document.createElement('link'); ln.rel='stylesheet'; ln.href='https://static.hotmart.com/css/hotmart-fb.min.css'; document.head.appendChild(ln); }
-  const openCk=(a)=>{ track('InitiateCheckout',{value:CONFIG.PRICE,currency:'USD'});
-    // fallback: if the pop-up does not open in 2.5s, go to the checkout page
-    setTimeout(()=>{ const open=[...document.querySelectorAll('iframe')].some(f=>/hotmart/.test(f.src)&&f.offsetParent!==null); if(!open) location.href=url.replace('checkoutMode=2&','').replace('checkoutMode=2',''); },2500); };
-  main.querySelectorAll('[data-ck]').forEach(a=>a.addEventListener('click',()=>openCk(a)));
+  // Checkout opens inside the quiz (Hotmart checkout in an embedded sheet, no redirect)
+  main.querySelectorAll('[data-ck]').forEach(a=>a.addEventListener('click',e=>{ e.preventDefault(); openCheckout(url); }));
   track('ViewContent',{value:CONFIG.PRICE,currency:'USD'});
-  cta('UNLOCK MY PLAN · $'+CONFIG.PRICE, true, ()=>{ const a=main.querySelector('[data-ck]'); a && a.click(); });
+  cta('UNLOCK MY PLAN · $'+CONFIG.PRICE, true, ()=>openCheckout(url));
 };
+
+
+function openCheckout(url){
+  track('InitiateCheckout',{value:CONFIG.PRICE,currency:'USD'});
+  if(document.getElementById('ckm')) return;
+  const d=document.createElement('div'); d.id='ckm'; d.className='ckm';
+  d.innerHTML=`<div class="ckm-sheet"><div class="ckm-top"><span>\ud83d\udd12 Secure checkout</span><button class="ckm-x" aria-label="Close">\u2715</button></div>
+    <div class="ckm-load" id="ckl"><div class="ckm-spin"></div>Loading secure checkout...</div>
+    <iframe src="${url}" allow="payment *; publickey-credentials-get *" title="Secure checkout"></iframe>
+    <a class="ckm-alt" href="${url.replace(/checkoutMode=2&?/,'')}" target="_blank" rel="noopener">Trouble paying? Open checkout in a new tab</a></div>`;
+  document.body.appendChild(d); document.body.style.overflow='hidden';
+  d.querySelector('iframe').addEventListener('load',()=>{ const l=document.getElementById('ckl'); if(l) l.remove(); });
+  const close=()=>{ d.remove(); document.body.style.overflow=''; track('checkout_closed'); };
+  d.querySelector('.ckm-x').onclick=close; d.addEventListener('click',e=>{ if(e.target===d) close(); });
+}
 
 /* ================= START ================= */
 render();
