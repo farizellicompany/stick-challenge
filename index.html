@@ -296,7 +296,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 <script>
 /* ================= CONFIG ================= */
 const CONFIG = {
-  CHECKOUT_URL: "https://checkout.example.com/stick-challenge", // TODO: link do checkout ($19)
+  CHECKOUT_URL: "https://pay.hotmart.com/D108665237M", // Hotmart checkout ($19)
   LEAD_WEBHOOK: "",          // TODO opcional: URL que recebe {email,name,...} por POST (Zapier/Make/ActiveCampaign)
   PRICE: 19,
   META_PIXEL_ID: ""          // TODO: ID do pixel da Meta
@@ -999,12 +999,12 @@ R.scratch = sc => {
 R.offer = sc => {
   const nm = A.name?esc(A.name)+"'s":'Your';
   const b=(A.blockers&&A.blockers.length)?blockers().slice(0,2):[];
-  const q=new URLSearchParams(Object.assign({}, UTM, {score:score, phase:A.hormone||'', joint:(A.joints||[])[0]||'', zone:A.zone||'', email:A.email||'', name:A.name||''}));
+  const q=new URLSearchParams(Object.assign({checkoutMode:'2'}, UTM, {sck:'quiz_'+(A.hormone||'na')+'_'+((A.joints||[])[0]||'na'), email:A.email||'', name:A.name||''}));
   const url = CONFIG.CHECKOUT_URL + (CONFIG.CHECKOUT_URL.includes('?')?'&':'?') + q.toString();
   const priceBox = (id)=>`<div class="box price-box"><div class="ribbon">✨ Built for you · Score ${score}/100</div>
     <div class="price-row"><div class="nm">28-Day Stick Challenge<small>Lifetime access · One payment</small></div><div><div class="price">$${CONFIG.PRICE}</div><div class="per-day">just $${(CONFIG.PRICE/28).toFixed(2)}/day</div></div></div>
     <ul class="incl"><li>28 follow-along videos, ${A.time||15} min each</li><li>${(A.joints||[]).includes('none')||!(A.joints||[]).length?'Full-range moves with beginner options':'Moves adjusted for your '+({knees:'knees',back:'lower back',shoulders:'shoulders',hips:'hips'}[(A.joints||[])[0]])}</li><li>4 weekly phases: Wake up, Firm up, Sculpt, Lock it in</li><li>Printable 28-day calendar</li><li>No app, no subscription, no equipment</li>${A.bonus?'<li class="bonus">Knee & Back Friendly Version (unlocked, FREE)</li>':''}</ul>
-    <a href="${url}" class="cta pulse" style="display:block;text-align:center;text-decoration:none;margin-top:14px" data-ck="${id}">UNLOCK MY PLAN →</a></div>`;
+    <a href="${url}" onclick="return false;" class="cta pulse hotmart-fb hotmart__button-checkout" style="display:block;text-align:center;text-decoration:none;margin-top:14px;background-image:linear-gradient(90deg,var(--pink),var(--pink-d))" data-ck="${id}">UNLOCK MY PLAN →</a></div>`;
   main.innerHTML = `<div class="scr offer">
     <h1>${nm} 28-day plan is <span class="hl">ready</span> ✅</h1>
     <div class="plan plan-full" style="margin:12px 0"><div class="plan-h">${nm} Stick Plan<span>8/8 built</span></div><div class="chips">${SLOTS.map(([k,ic,lb])=>`<div class="chip on" style="animation:none">${ic} ${plan[k]||lb}</div>`).join('')}</div></div>
@@ -1029,9 +1029,15 @@ R.offer = sc => {
     ${priceBox(2)}
     <p class="disc">This program is for general fitness and wellness and is not medical advice. Consult your doctor before starting any exercise program. Results vary from person to person.</p>
   </div>`;
-  main.querySelectorAll('[data-ck]').forEach(a=>a.onclick=()=>track('InitiateCheckout',{value:CONFIG.PRICE,currency:'USD'}));
+  // Hotmart widget: checkout opens as a pop-up over the quiz (no redirect)
+  if(!window.__hmLoaded){ window.__hmLoaded=true; const sc=document.createElement('script'); sc.src='https://static.hotmart.com/checkout/widget.min.js'; document.head.appendChild(sc);
+    const ln=document.createElement('link'); ln.rel='stylesheet'; ln.href='https://static.hotmart.com/css/hotmart-fb.min.css'; document.head.appendChild(ln); }
+  const openCk=(a)=>{ track('InitiateCheckout',{value:CONFIG.PRICE,currency:'USD'});
+    // fallback: if the pop-up does not open in 2.5s, go to the checkout page
+    setTimeout(()=>{ const open=[...document.querySelectorAll('iframe')].some(f=>/hotmart/.test(f.src)&&f.offsetParent!==null); if(!open) location.href=url.replace('checkoutMode=2&','').replace('checkoutMode=2',''); },2500); };
+  main.querySelectorAll('[data-ck]').forEach(a=>a.addEventListener('click',()=>openCk(a)));
   track('ViewContent',{value:CONFIG.PRICE,currency:'USD'});
-  cta('UNLOCK MY PLAN · $'+CONFIG.PRICE, true, ()=>{ track('InitiateCheckout',{value:CONFIG.PRICE,currency:'USD'}); location.href=url; });
+  cta('UNLOCK MY PLAN · $'+CONFIG.PRICE, true, ()=>{ const a=main.querySelector('[data-ck]'); a && a.click(); });
 };
 
 /* ================= START ================= */
