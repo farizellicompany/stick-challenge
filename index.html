@@ -134,7 +134,9 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .bodymap{position:relative;width:260px;margin:4px auto 0}
 .bodymap svg{width:100%;display:block}
 .zone{position:absolute;border-radius:50%;border:2.5px dashed var(--pink);background:rgba(242,123,164,.12);display:grid;place-items:center;font-size:12px;font-weight:900;color:var(--pink-d);animation:breathe 2s infinite}
-.zone.sel{background:var(--pink);color:#fff;border-style:solid;animation:none}
+.hlpulse{animation:hlp 1.1s ease-in-out infinite}@keyframes hlp{0%,100%{opacity:.75}50%{opacity:1}}
+.zone.sel{background:rgba(255,92,147,.12);color:#fff;text-shadow:0 1px 3px rgba(120,20,60,.6);border-style:solid;animation:none}
+.zone.off{opacity:0;transition:opacity .3s}
 @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
 
 /* Level up */
@@ -399,6 +401,18 @@ function frame(o){
   s+=seg([hx,hy+8],[cx+sx*.5,46+ty],3.4,3.6,skD);
   // arms drawn after torso
   s+=arms+fore;
+  // ---- highlight (body map) ----
+  if(o.hl){
+    const pk='#FF5C93'; let h='';
+    const segA=(P)=>seg(P[0],P[1],ar[0]+1.2,ar[1]+1.2,pk)+seg(P[1],P[2],ar[1]+1.2,ar[2]+1.2,pk);
+    const segL=(P,full)=>seg(P[0],P[1],tr[0]+1.2,tr[1]+1.2,pk)+(full?seg(P[1],P[2],tr[1]+1.2,tr[2]+1.2,pk):'');
+    if(o.hl==='arms'||o.hl==='full') h+=segA(A1)+segA(A2);
+    if(o.hl==='belly') h+=`<ellipse cx="${cx}" cy="${80+ty}" rx="${f1(Wa+3.5)}" ry="10" fill="${pk}"/>`;
+    if(o.hl==='hips') h+=`<path d="M${f1(cx-H-1.5)} ${90+ty}Q${cx} ${84+ty} ${f1(cx+H+1.5)} ${90+ty}L${f1(cx+H+1.5)} ${102+ty}L${f1(cx-H-1.5)} ${102+ty}Z" fill="${pk}"/>`+segL(L)+segL(R);
+    if(o.hl==='full') h+=`<path d="${torso}" fill="${pk}"/>`+segL(L,1)+segL(R,1);
+    const id='gl'+Math.random().toString(36).slice(2,7);
+    s+=`<defs><filter id="${id}" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.2"/></filter></defs><g class="hlpulse"><g filter="url(#${id})" opacity=".55">${h}</g><g opacity=".5">${h}</g></g>`;
+  }
   // face
   s+=`<ellipse cx="${hx-10}" cy="${hy+1.5}" rx="1.8" ry="2.6" fill="${skD}"/><ellipse cx="${hx+10}" cy="${hy+1.5}" rx="1.8" ry="2.6" fill="${skD}"/>`;
   s+=`<ellipse cx="${hx}" cy="${hy}" rx="10" ry="12" fill="${sk}"/>`;
@@ -715,18 +729,20 @@ R.img = sc => {
 };
 
 R.bodymap = sc => {
-  const zones=[['belly','Belly',50,47,74,58],['arms','Arms',14,26,62,50],['arms','Arms',73,26,62,50],['hips','Hips & thighs',50,70,80,64]];
+  const base=Object.assign({},WOMEN[A.age||'45-49'],{pose:'down',stick:false,w:1.12});
+  const zones=[['arms','Arms',82,33,66,46],['belly','Belly',50,41,70,48],['hips','Hips & thighs',50,60,84,58]];
   main.innerHTML = `<div class="scr">${head(sc)}
-    <div class="bodymap">${fig(Object.assign({},WOMEN[A.age||'45-49'],{pose:'down',stick:false,w:1.15,belly:1}))}
+    <div class="bodymap"><div id="bm">${fig(base)}</div>
       ${zones.map(([v,lb,x,y,w,h])=>`<button class="zone" data-v="${v}" style="left:calc(${x}% - ${w/2}px);top:calc(${y}% - ${h/2}px);width:${w}px;height:${h}px">${lb}</button>`).join('')}
     </div>
     <div class="opts" style="margin-top:14px">${optBtn(['full','✨','My whole body'])}</div></div>`;
   const pick=v=>{
-    main.querySelectorAll('[data-v]').forEach(x=>x.classList.toggle('sel',x.dataset.v===v));
+    main.querySelectorAll('[data-v]').forEach(x=>{ x.classList.toggle('sel',x.dataset.v===v); if(x.classList.contains('zone')&&x.dataset.v!==v) x.classList.add('off'); x.onclick=null; });
+    $('#bm').innerHTML=fig(Object.assign({},base,{hl:v}));
     A.zone=v; setPts('zone',sc.p);
     setPiece('zone',{belly:'Belly first',arms:'Arms first',hips:'Hips & thighs',full:'Full body'}[v]);
-    main.querySelectorAll('[data-v]').forEach(x=>x.onclick=null);
-    advanceAfter({belly:"Belly it is. We'll start there. 🎯",arms:'Arms it is. Toned and strong. 💪',hips:'Hips and thighs. Got it. 🍑',full:'Head to toe. Love it. ✨'}[v]);
+    toast({belly:"Belly it is. We'll start there. 🎯",arms:'Arms it is. Toned and strong. 💪',hips:'Hips and thighs. Got it. 🍑',full:'Head to toe. Love it. ✨'}[v],1500);
+    setTimeout(next,1400);
   };
   main.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>pick(b.dataset.v));
 };
