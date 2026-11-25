@@ -953,8 +953,7 @@ R.future = sc => {
       <div class="col"><div class="art">${fig(Object.assign({},W,{pose:'slump',mood:'flat',stick:false}))}</div><h4>Today</h4>${rows.map(r=>`<div class="mlbl">${r[0]}</div>${m(r[0],r[1])}`).join('')}</div>
       <div class="col" style="border:2px solid var(--pink)"><div class="art">${anim({pose:'overhead'},{pose:'squat'},W)}</div><h4 class="hl">Day 28</h4>${rows.map(r=>`<div class="mlbl">${r[0]}</div>${m(r[0],r[2])}`).join('')}</div>
     </div>
-    <div class="tip">🎯 Your goal: <b>${{belly:'a flatter, firmer belly',arms:'toned, strong arms',hips:'firmer hips and thighs',full:'a stronger, firmer body'}[A.zone]||'a stronger body'}</b>, more energy and clothes that fit the way you like. One habit at a time.</div>
-    <p class="small">Illustration only. Results vary from person to person.</p></div>`;
+    <div class="tip">🎯 Your goal: <b>${{belly:'a flatter, firmer belly',arms:'toned, strong arms',hips:'firmer hips and thighs',full:'a stronger, firmer body'}[A.zone]||'a stronger body'}</b>, more energy and clothes that fit the way you like. One habit at a time.</div></div>`;
   cta('Continue', true, next);
 };
 
