@@ -133,18 +133,6 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 /* Body map */
 .bodymap{position:relative;width:260px;margin:4px auto 0}
 .bodymap svg{width:100%;display:block}
-.ph{display:block;mix-blend-mode:multiply;user-select:none;-webkit-user-drag:none}
-.card-img .art img.ph{height:150px;width:auto}
-.info-art img.ph{height:210px;width:auto}
-.sw .art img.ph{height:180px;width:auto}
-.sw .art img.face,.info-art img.face{width:150px;height:150px;border-radius:50%;object-fit:cover;mix-blend-mode:normal;margin:0 auto 14px;box-shadow:0 6px 18px rgba(224,85,138,.25);border:4px solid #fff}
-.sw .art{justify-content:center}
-.compare .col .art img.ph{height:165px;width:auto}
-.timer .fig img.ph{height:158px;width:auto;margin-bottom:-6px}
-.bodymap img.ph{width:100%;height:auto}
-.bodymap .hlz{position:absolute;border-radius:50%;background:radial-gradient(closest-side,rgba(255,64,136,.62),rgba(255,64,136,.32) 60%,rgba(255,64,136,0));opacity:0;transition:opacity .35s;pointer-events:none;mix-blend-mode:multiply}
-.bodymap.hl-arms .hlz.arms,.bodymap.hl-belly .hlz.belly,.bodymap.hl-hips .hlz.hips,.bodymap.hl-full .hlz{opacity:1;animation:hlpulse 1.4s ease-in-out infinite}
-@keyframes hlpulse{0%,100%{filter:brightness(1)}50%{filter:brightness(1.18) saturate(1.2)}}
 .zone{position:absolute;border-radius:50%;border:2.5px dashed var(--pink);background:rgba(242,123,164,.12);display:grid;place-items:center;font-size:12px;font-weight:900;color:var(--pink-d);animation:breathe 2s infinite}
 .hlpulse{animation:hlp 1.1s ease-in-out infinite}@keyframes hlp{0%,100%{opacity:.75}50%{opacity:1}}
 .zone.sel{background:rgba(255,92,147,.12);color:#fff;text-shadow:0 1px 3px rgba(120,20,60,.6);border-style:solid;animation:none}
@@ -474,19 +462,10 @@ function fig(o={}){ return `<svg viewBox="${o.vb||'0 0 120 200'}" xmlns="http://
 function anim(a,b,o={}){ return `<svg class="anim go" viewBox="0 0 120 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g class="fa">${frame(Object.assign({},o,a))}</g><g class="fb">${frame(Object.assign({},o,b))}</g></svg>`; }
 
 const WOMEN = {
-  '40-44':{skin:SKIN[0],hair:'#5A3524',top:'#E96E9C',bottom:'#F08DB0'},
-  '45-49':{skin:SKIN[0],hair:'#D4AE68',top:'#E96E9C',bottom:'#F08DB0'},
-  '50-54':{skin:SKIN[3],hair:'#1E1412',top:'#E96E9C',bottom:'#F08DB0',bun:true},
-  '55+':  {skin:SKIN[1],hair:'#B9B3B0',top:'#E96E9C',bottom:'#F08DB0',short:true}
-};
-const PERSONA = {'40-44':'p1','45-49':'p2','50-54':'p3','55+':'p4'};
-function ph(n,cls='',age){ const p=PERSONA[age||A.age||'45-49']; return `<img class="ph ${cls}" src="${p}-${n}.webp" alt="" decoding="async" draggable="false">`; }
-function preloadPersona(){ const p=PERSONA[A.age||'45-49']; ['01','02','03','04','05','06','07','08','09','10'].forEach(n=>{ const i=new Image(); i.src=`${p}-${n}.webp`; }); }
-// highlight boxes on photo 03 per persona: [x%,y%,w%,h%,rot]
-const HLZ = {
-  arms:[[29.5,41,10,26,4],[70.5,41,10,26,-4]],
-  belly:[[50,40.5,27,10,0]],
-  hips:[[50,55,40,13,0],[39,64,15,15,0],[61,64,15,15,0]]
+  '40-44':{skin:SKIN[0],hair:'#4A2E22',top:'#F27BA4',bottom:'#7D5C79'},
+  '45-49':{skin:SKIN[2],hair:'#2B1C17',top:'#F59E6B',bottom:'#5E4A6A',bun:true},
+  '50-54':{skin:SKIN[1],hair:'#C99A5B',top:'#B98BE0',bottom:'#6A5A7A'},
+  '55+':  {skin:SKIN[0],hair:'#CFC7CC',top:'#62B6A5',bottom:'#6E5F6E',short:true}
 };
 const MOVES = {
   squat:{name:'Stick Squat', a:{pose:'overhead'}, b:{pose:'squat'}, desc:'Arms up, sit back, stand tall'},
@@ -562,7 +541,7 @@ add({id:'hormone_info', phase:0, type:'info', render:()=>{
   const h=A.hormone;
   const big = ['peri','meno','post','unsure'].includes(h);
   return {
-    art: ph('08'),
+    art: fig({...WOMEN[A.age||'45-49'],pose:'belly',mood:'worried',prop:'waves',stick:false}),
     title: big ? `It's not your willpower.<br><span class="hl">It's your hormones.</span>` : `Your body is <span class="hl">changing the rules</span>.`,
     body: big
       ? `<p>After 40, shifting estrogen changes <b>where</b> your body stores fat. Hello, belly. 👋</p><p>That's why the diets and workouts that worked at 30 stop working now.</p>`
@@ -590,7 +569,7 @@ add({id:'time', phase:1, type:'slider', q:'How much time can you give yourself e
   cap:v=> v<10?'Tiny but mighty.': v<=20?'The sweet spot for busy women.':'Ambitious! We can do that.',
   piece:v=>['time',`${v} min/day`], react:v=>`${v} minutes. That fits even your busiest day.`, p:5});
 add({id:'gentle_info', phase:1, type:'info', render:()=>({
-  art: ph('10'),
+  art: anim({pose:'stand'},{pose:'overhead'},Object.assign({},WOMEN[A.age||'50-54'],{prop:'calm'})),
   title:`You don't need <span class="hl">brutal workouts</span>.`,
   body:`<p>After 40, too much high-intensity exercise can push up stress hormones, and stress loves to park itself around the belly.</p><p><b>Gentle, steady, every day</b> beats hard and occasional.</p>`,
   tip:`That's exactly how the Stick Challenge works.`
@@ -602,7 +581,7 @@ add({id:'joints', phase:1, type:'multi', max:2, none:'none', q:'Does anything bo
 add({id:'joints_info', phase:1, type:'info', skipIf:()=> (A.joints||[]).includes('none'), render:()=>{
   const j=(A.joints||[])[0];
   const name={knees:'knees',back:'lower back',shoulders:'shoulders',hips:'hips'}[j]||'joints';
-  return {art: ph('10'),
+  return {art: anim({pose:'overhead'},{pose:'squat'},Object.assign({},WOMEN[A.age||'55+'],j==='knees'?{prop:'knee'}:{})),
     title:`We've got your <span class="hl">${name}</span>. 🤍`,
     body:`<p>The stick works like a built-in guide. It keeps your back straight and your body aligned, so the moves stay gentle on your ${name}.</p><p>No jumping. No floor burpees. Every move has an easier version.</p>`,
     tip:`Stronger muscles around your ${name} usually means less strain in daily life.`};
@@ -652,7 +631,7 @@ add({id:'lvl4', phase:3, type:'level', medal:'🛡️', badge:'Safety Check Pass
 
 /* ---------- PHASE 4 · PLAN ---------- */
 add({id:'quit_info', phase:4, type:'info', render:()=>({
-  art: ph('09'),
+  art: anim({pose:'sit',mood:'flat',prop:'zzz',stick:false},{pose:'stand',mood:'big'},WOMEN[A.age||'40-44']),
   title:`Why do most women quit?<br><span class="hl">They start too hard.</span>`,
   body:`<p>Day 1 feels great. Day 4 hurts. Day 7 you're done.</p><p>Your plan starts gentle and grows with you, so by day 28 it's just part of your day.</p>`,
   tip:`Small and steady is how habits stick.`
@@ -709,12 +688,12 @@ R.cover = sc => {
     <h1>The 28-Day <span class="hl">Stick Challenge</span></h1>
     <p class="sub">Build your personal plan in 2 minutes.<br><b>Tap your age to start.</b></p>
     <div class="grid2">${Object.keys(WOMEN).map(k=>`
-      <button class="card-img" data-v="${k}"><div class="art">${ph('10','',k)}</div><div class="lbl">Age ${k} <span>›</span></div></button>`).join('')}
+      <button class="card-img" data-v="${k}"><div class="art">${anim({pose:'stand'},{pose:'overhead'},WOMEN[k])}</div><div class="lbl">Age ${k} <span>›</span></div></button>`).join('')}
     </div>
     <p class="foot-note">One broom handle. Your living room. One payment.</p>
   </div>`;
   main.querySelectorAll('.card-img').forEach(b=>b.onclick=()=>{
-    A.age=b.dataset.v; preloadPersona(); b.classList.add('sel'); setPts('age',4); track('quiz_start',{age:A.age}); setTimeout(next,250);
+    A.age=b.dataset.v; b.classList.add('sel'); setPts('age',4); track('quiz_start',{age:A.age}); setTimeout(next,250);
   });
 };
 
@@ -754,7 +733,7 @@ R.multi = sc => {
 
 R.img = sc => {
   main.innerHTML = `<div class="scr">${head(sc)}<div class="grid2">${sc.opts.map(([v,lb,o])=>`
-    <button class="card-img ${sc.light?'light':''}" data-v="${v}"><div class="art">${ph(({slim:'02',avg:'03',extra:'04',plus:'05',toned:'06',curvy:'07',sizes:'08',me:'09'})[v])}</div><div class="lbl">${lb}</div></button>`).join('')}</div></div>`;
+    <button class="card-img ${sc.light?'light':''}" data-v="${v}"><div class="art">${fig(Object.assign({},WOMEN[A.age||'45-49'],{stick:false,pose:'down',vb:'16 4 88 192'},o))}</div><div class="lbl">${lb}</div></button>`).join('')}</div></div>`;
   main.querySelectorAll('.card-img').forEach(b=>b.onclick=()=>{
     b.classList.add('sel'); const v=b.dataset.v; A[sc.id]=v; setPts(sc.id,sc.p||0);
     main.querySelectorAll('.card-img').forEach(x=>x.onclick=null);
@@ -764,15 +743,15 @@ R.img = sc => {
 
 R.bodymap = sc => {
   const base=Object.assign({},WOMEN[A.age||'45-49'],{pose:'down',stick:false,w:1.12});
-  const zones=[['arms','Arms',80,30,62,40],['belly','Belly',50,41,66,40],['hips','Hips & thighs',50,61,96,48]];
+  const zones=[['arms','Arms',82,33,66,46],['belly','Belly',50,41,70,48],['hips','Hips & thighs',50,60,84,58]];
   main.innerHTML = `<div class="scr">${head(sc)}
-    <div class="bodymap" id="bmw"><div id="bm">${ph('03')}${Object.entries(HLZ).map(([k,arr])=>arr.map(([x,y,w,h,r])=>`<span class="hlz ${k}" style="left:${x-w/2}%;top:${y-h/2}%;width:${w}%;height:${h}%;transform:rotate(${r}deg)"></span>`).join('')).join('')}</div>
+    <div class="bodymap"><div id="bm">${fig(base)}</div>
       ${zones.map(([v,lb,x,y,w,h])=>`<button class="zone" data-v="${v}" style="left:calc(${x}% - ${w/2}px);top:calc(${y}% - ${h/2}px);width:${w}px;height:${h}px">${lb}</button>`).join('')}
     </div>
     <div class="opts" style="margin-top:14px">${optBtn(['full','✨','My whole body'])}</div></div>`;
   const pick=v=>{
     main.querySelectorAll('[data-v]').forEach(x=>{ x.classList.toggle('sel',x.dataset.v===v); if(x.classList.contains('zone')&&x.dataset.v!==v) x.classList.add('off'); x.onclick=null; });
-    $('#bmw').classList.add('hl-'+v);
+    $('#bm').innerHTML=fig(Object.assign({},base,{hl:v}));
     A.zone=v; setPts('zone',sc.p);
     setPiece('zone',{belly:'Belly first',arms:'Arms first',hips:'Hips & thighs',full:'Full body'}[v]);
     toast({belly:"Belly it is. We'll start there. 🎯",arms:'Arms it is. Toned and strong. 💪',hips:'Hips and thighs. Got it. 🍑',full:'Head to toe. Love it. ✨'}[v],1500);
@@ -794,7 +773,7 @@ R.statements = sc => {
     const [k,t,o]=sc.items[i];
     main.innerHTML = `<div class="scr"><h2>Does this sound like you?</h2><p class="sub">Swipe or tap. ${i+1} of ${sc.items.length}</p>
       <div class="stack"><div class="sw" id="card"><div class="stamp y">YES</div><div class="stamp n">NOPE</div>
-        <div class="art">${ph('01','face')}</div><div class="t">“${t}”</div></div></div>
+        <div class="art">${fig(Object.assign({},WOMEN[A.age||'45-49'],o,{stick:false}))}</div><div class="t">“${t}”</div></div></div>
       <div class="sw-btns"><button class="sw-btn" data-a="no">✕</button><button class="sw-btn y" data-a="yes">✓</button></div>
       <div class="sw-btn-lbl"><span>Not me</span><span>That's me</span></div></div>`;
     const go=a=>{ A.statements[k]=a; const card=$('#card'); card.style.transform=`translateX(${a==='yes'?400:-400}px) rotate(${a==='yes'?18:-18}deg)`; card.style.opacity=0;
@@ -877,7 +856,7 @@ R.challenge = sc => {
   main.innerHTML = `<div class="scr" style="text-align:center"><h2>Try it right now ⏱</h2>
     <p class="sub">Grab your stick (or a towel). Hold it overhead and <b>squeeze</b> for 10 seconds.</p>
     <div class="timer"><svg class="ring" width="210" height="210" viewBox="0 0 210 210"><circle cx="105" cy="105" r="96" fill="none" stroke="#FFE4EC" stroke-width="12"/><circle id="tr" cx="105" cy="105" r="96" fill="none" stroke="#E0558A" stroke-width="12" stroke-linecap="round" stroke-dasharray="603.2" stroke-dashoffset="603.2"/></svg>
-      <div class="fig" id="cf">${ph('10')}</div><div class="num" id="tn">10</div></div>
+      <div class="fig" id="cf">${fig(Object.assign({},W,{pose:'overhead'}))}</div><div class="num" id="tn">10</div></div>
     <div id="cmsg" class="sub" style="margin-top:12px">Ready when you are.</div></div>`;
   let running=false;
   const start=()=>{
@@ -984,8 +963,8 @@ R.future = sc => {
   const rows=[['Energy',2,4],['Strength',1,4],['Flexibility',2,4],['Confidence',2,5]];
   main.innerHTML = `<div class="scr"><h2>Meet your future self. <span class="hl">Confident</span> in your own body.</h2>
     <div class="compare">
-      <div class="col"><div class="art">${ph('03')}</div><h4>Today</h4>${rows.map(r=>`<div class="mlbl">${r[0]}</div>${m(r[0],r[1])}`).join('')}</div>
-      <div class="col" style="border:2px solid var(--pink)"><div class="art">${ph('09')}</div><h4 class="hl">Day 28</h4>${rows.map(r=>`<div class="mlbl">${r[0]}</div>${m(r[0],r[2])}`).join('')}</div>
+      <div class="col"><div class="art">${fig(Object.assign({},W,{pose:'slump',mood:'flat',stick:false}))}</div><h4>Today</h4>${rows.map(r=>`<div class="mlbl">${r[0]}</div>${m(r[0],r[1])}`).join('')}</div>
+      <div class="col" style="border:2px solid var(--pink)"><div class="art">${anim({pose:'overhead'},{pose:'squat'},W)}</div><h4 class="hl">Day 28</h4>${rows.map(r=>`<div class="mlbl">${r[0]}</div>${m(r[0],r[2])}`).join('')}</div>
     </div>
     <div class="tip">🎯 Your goal: <b>${{belly:'a flatter, firmer belly',arms:'toned, strong arms',hips:'firmer hips and thighs',full:'a stronger, firmer body'}[A.zone]||'a stronger body'}</b>, more energy and clothes that fit the way you like. One habit at a time.</div></div>`;
   cta('Continue', true, next);
