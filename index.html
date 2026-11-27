@@ -690,7 +690,7 @@ R.cover = sc => {
     <div class="grid2">${Object.keys(WOMEN).map(k=>`
       <button class="card-img" data-v="${k}"><div class="art">${anim({pose:'stand'},{pose:'overhead'},WOMEN[k])}</div><div class="lbl">Age ${k} <span>›</span></div></button>`).join('')}
     </div>
-    <p class="foot-note">One broom handle. Your living room.</p>
+    <p class="foot-note">Just a stick and 15 minutes at home.</p>
   </div>`;
   main.querySelectorAll('.card-img').forEach(b=>b.onclick=()=>{
     A.age=b.dataset.v; b.classList.add('sel'); setPts('age',4); track('quiz_start',{age:A.age}); setTimeout(next,250);
