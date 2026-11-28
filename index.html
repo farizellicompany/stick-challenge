@@ -312,7 +312,7 @@ const CONFIG = {
   CHECKOUT_URL: "https://pay.hotmart.com/D108665237M", // Hotmart checkout ($19)
   LEAD_WEBHOOK: "",          // TODO opcional: URL que recebe {email,name,...} por POST (Zapier/Make/ActiveCampaign)
   PRICE: 19,
-  META_PIXEL_ID: ""          // TODO: ID do pixel da Meta
+  META_PIXEL_ID: "1885961585755828" // Meta Pixel (Purchase + InitiateCheckout come from Hotmart checkout + CAPI)
 };
 
 /* ================= TRACKING ================= */
@@ -320,9 +320,14 @@ if (CONFIG.META_PIXEL_ID) {
   !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
   fbq('init', CONFIG.META_PIXEL_ID); fbq('track','PageView');
 }
+// Standard events fired by the quiz: PageView (on load), Lead (email, once), ViewContent (offer, once).
+// InitiateCheckout and Purchase are NOT fired here: the Hotmart checkout sends them (browser + Conversions API).
+const ONCE={}; const SID=Date.now().toString(36)+Math.random().toString(36).slice(2,8);
 function track(ev, params={}){
   const p = Object.assign({phase:A.hormone||'', joint:(A.joints||[])[0]||'', score:score}, params);
-  try{ if(window.fbq){ ['Lead','InitiateCheckout','ViewContent'].includes(ev) ? fbq('track',ev,p) : fbq('trackCustom',ev,p);} }catch(e){}
+  const std=['Lead','ViewContent'].includes(ev);
+  if(std){ if(ONCE[ev]) return; ONCE[ev]=1; }
+  try{ if(window.fbq){ std ? fbq('track',ev,p,{eventID:ev+'_'+SID}) : fbq('trackCustom',ev,p);} }catch(e){}
   try{ (window.dataLayer=window.dataLayer||[]).push(Object.assign({event:ev},p)); }catch(e){}
 }
 const UTM = Object.fromEntries(new URLSearchParams(location.search));
@@ -1050,7 +1055,7 @@ R.offer = sc => {
 
 
 function openCheckout(url){
-  track('InitiateCheckout',{value:CONFIG.PRICE,currency:'USD'});
+  track('checkout_open',{value:CONFIG.PRICE,currency:'USD'});
   if(document.getElementById('ckm')) return;
   const d=document.createElement('div'); d.id='ckm'; d.className='ckm';
   d.innerHTML=`<div class="ckm-sheet"><div class="ckm-top"><span>\ud83d\udd12 Secure checkout</span><button class="ckm-x" aria-label="Close">\u2715</button></div>
